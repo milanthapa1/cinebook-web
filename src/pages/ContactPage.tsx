@@ -27,13 +27,13 @@ export const ContactPage: React.FC = () => {
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-[#00a8cc] shrink-0 mt-0.5" />
               <div>
-                <strong className="block text-gray-900 font-semibold">Durbar Marg Complex</strong>
-                <span>Kathmandu 44600, Nepal</span>
+                <strong className="block text-gray-900 font-semibold">Milan Residannce</strong>
+                <span>Kathmandu, Nepal</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-[#00a8cc] shrink-0" />
-              <span>+977-1-4200000 / +977-9800000000</span>
+              <span>+977-9762415657</span>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 text-[#00a8cc] shrink-0" />
@@ -54,7 +54,7 @@ export const ContactPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-600">Your Name</label>
-                <input type="text" required placeholder="John Doe" className={inputCls} />
+                <input type="text" required placeholder="your name" className={inputCls} />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-600">Email Address</label>
