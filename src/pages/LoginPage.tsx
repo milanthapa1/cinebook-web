@@ -35,7 +35,8 @@ export const LoginPage: React.FC = () => {
 
     try {
       // Use raw fetch to bypass any axios interceptor issues
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || '/api/v1'}/auth/login`, {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? 'https://your-render-api-url.onrender.com' : '/api/v1');
+      const res = await fetch(`${apiBaseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -64,7 +65,8 @@ export const LoginPage: React.FC = () => {
     setGoogleLoading(true);
     try {
       const idToken = await signInWithGoogle();
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || '/api/v1'}/auth/google`, {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? 'https://your-render-api-url.onrender.com' : '/api/v1');
+      const res = await fetch(`${apiBaseUrl}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
