@@ -35,27 +35,18 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      // Use raw fetch to bypass any axios interceptor issues
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? 'https://your-render-api-url.onrender.com' : '/api/v1');
-      const res = await fetch(`${apiBaseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await apiClient.post('/auth/login', { email, password });
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'Invalid credentials');
-      }
-
-      const { user, accessToken } = data.data;
+      const { user, accessToken } = res.data.data;
       setAuth(user, accessToken);
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error('[Login error]', err);
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to sign in. Please check your credentials.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -66,20 +57,16 @@ export const LoginPage: React.FC = () => {
     setGoogleLoading(true);
     try {
       const idToken = await signInWithGoogle();
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? 'https://your-render-api-url.onrender.com' : '/api/v1');
-      const res = await fetch(`${apiBaseUrl}/auth/google`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ idToken }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.message || 'Google sign-in failed');
-      const { user, accessToken } = data.data;
+      const res = await apiClient.post('/auth/google', { idToken });
+      const { user, accessToken } = res.data.data;
       setAuth(user, accessToken);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError(err.message || 'Google sign-in failed. Please try again.');
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        'Google sign-in failed. Please try again.';
+      setError(message);
     } finally {
       setGoogleLoading(false);
     }
