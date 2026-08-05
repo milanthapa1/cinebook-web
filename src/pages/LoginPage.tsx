@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Lock, Mail, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../features/auth/useAuthStore';
+import { apiClient } from '../lib/apiClient';
 import { signInWithGoogle } from '../lib/googleAuth';
 
 /** Google "G" logo SVG — used on the OAuth button */

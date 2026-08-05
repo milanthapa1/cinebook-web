@@ -27,6 +27,16 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Skip token-refresh retry for auth endpoints (login, register, google).
+    // A 401 on these endpoints means "invalid credentials", not "token expired",
+    // so attempting a refresh would be pointless and could trigger logout().
+    const isAuthEndpoint =
+      originalRequest.url?.startsWith('/auth/') &&
+      !originalRequest.url?.startsWith('/auth/refresh');
+    if (isAuthEndpoint) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
