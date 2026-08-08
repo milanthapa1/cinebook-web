@@ -34,10 +34,10 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-gray-700 font-semibold uppercase text-[10px] tracking-widest mb-3">Cinema Locations</h4>
             <ul className="space-y-2">
-              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> Civil Mall, Kathmandu</li>
-              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> Labim Mall, Lalitpur</li>
-              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> Chhaya Center, Thamel</li>
-              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> Pokhara Trade Mall, Pokhara</li>
+              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> MT Cinemas Kathmandu</li>
+              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> MT Cinemas Lalitpur</li>
+              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" /> MT Cinemas Bhaktapur</li>
+              
             </ul>
           </div>
 

@@ -3,24 +3,24 @@ import React from 'react';
 export const AboutPage: React.FC = () => {
   const halls = [
     {
-      name: 'Audi 1 (IMAX Laser)',
+      name: 'Audi 1',
       capacity: 60,
       screenType: '4K Dual Laser 3D Projection',
-      soundSystem: 'Dolby Atmos 12.1 Custom Array',
+      soundSystem: 'Dolby Atmos',
       description:
         'Our flagship auditorium featuring edge-to-edge curved screen with high-frame-rate laser projection.',
     },
     {
-      name: 'Audi 2 (Dolby Cinema)',
-      capacity: 48,
+      name: 'Audi 2',
+      capacity: 60,
       screenType: 'Laser HDR Projection',
       soundSystem: 'Dolby Atmos Surround',
       description:
         'Engineered for exceptional HDR visuals and immersive surround sound across every seat.',
     },
     {
-      name: 'Audi 3 (VIP Lounge)',
-      capacity: 32,
+      name: 'Audi 3',
+      capacity: 60,
       screenType: 'MicroLED HDR Screen',
       soundSystem: 'Bowers & Wilkins Custom Audio',
       description:
