@@ -12,15 +12,14 @@ export const BookingSummaryPage: React.FC = () => {
   const showTime  = searchParams.get('time') || '';
   const navigate = useNavigate();
 
-  const { selectedSeats, concessions, updateConcessionQuantity } = useSeatStore();
+  const { selectedSeats } = useSeatStore();
   const createBookingMutation = useCreateBooking();
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const seatsTotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-  const concessionsTotal = concessions.reduce((sum, c) => sum + c.price * c.quantity, 0);
-  const subtotal = seatsTotal + concessionsTotal;
+  const subtotal = seatsTotal;
   const vatAmount = Math.round(subtotal * 0.13);
   const grandTotal = subtotal + vatAmount;
 
@@ -35,7 +34,6 @@ export const BookingSummaryPage: React.FC = () => {
       const booking = await createBookingMutation.mutateAsync({
         showtimeId,
         seatIds: selectedSeats.map((s) => s.id),
-        concessionsAmount: concessionsTotal,
       });
       navigate(`/payment?bookingId=${booking.id}`);
     } catch (err: any) {
@@ -54,15 +52,14 @@ export const BookingSummaryPage: React.FC = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-gray-500">Now Showing</span>
-          <span className="text-[#00a8cc] border-b-2 border-[#00a8cc] pb-0.5">Food & Beverages</span>
-          <span className="text-gray-500">Checkout</span>
+          <span className="text-[#00a8cc] border-b-2 border-[#00a8cc] pb-0.5">Checkout</span>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Booking Summary</h1>
-          <p className="text-xs text-gray-600 mt-1">Review your seat selection and optionally add cinema snacks</p>
+          <p className="text-xs text-gray-600 mt-1">Review your seat selection before proceeding to checkout</p>
         </div>
 
         {errorMsg && (
@@ -108,39 +105,6 @@ export const BookingSummaryPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Concessions Add-ons */}
-        {concessions.length > 0 && (
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5">
-            <h3 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
-              🍿 Cinema Concessions
-            </h3>
-            <div className="space-y-3">
-              {concessions.map((item) => (
-                <div key={item.id} className="p-4 bg-gray-100 rounded-xl border border-gray-200 flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900">{item.name}</h4>
-                    <span className="text-xs text-gray-600 font-semibold">NPR {item.price.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center gap-3 bg-gray-200 px-3 py-1.5 rounded-xl border border-gray-300">
-                    <button
-                      onClick={() => updateConcessionQuantity(item.id, -1)}
-                      className="p-1 hover:text-[#00a8cc] text-gray-600 transition-colors"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="text-sm font-bold text-gray-900 w-5 text-center">{item.quantity}</span>
-                    <button
-                      onClick={() => updateConcessionQuantity(item.id, 1)}
-                      className="p-1 hover:text-[#00a8cc] text-gray-600 transition-colors"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Price Breakdown */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5">
@@ -153,12 +117,6 @@ export const BookingSummaryPage: React.FC = () => {
               <span>Ticket Base ({selectedSeats.length} seat{selectedSeats.length !== 1 ? 's' : ''})</span>
               <span className="text-gray-900 font-semibold">NPR {seatsTotal.toFixed(2)}</span>
             </div>
-            {concessionsTotal > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>Concession Add-ons</span>
-                <span className="text-gray-900 font-semibold">NPR {concessionsTotal.toFixed(2)}</span>
-              </div>
-            )}
             <div className="flex justify-between text-gray-600">
               <span>Govt. VAT (13%)</span>
               <span className="text-gray-900 font-semibold">NPR {vatAmount.toFixed(2)}</span>

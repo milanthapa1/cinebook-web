@@ -72,7 +72,6 @@ export const useCreateBooking = () => {
     mutationFn: async (payload: {
       showtimeId: string;
       seatIds: string[];
-      concessionsAmount?: number;
     }) => {
       const res = await apiClient.post('/bookings', payload);
       return res.data.data as Booking;

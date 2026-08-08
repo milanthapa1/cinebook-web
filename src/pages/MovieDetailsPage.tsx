@@ -348,7 +348,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
 
           {/* Tab bar */}
           <div className="flex border-b border-gray-200 mb-0 bg-white">
-            {['NOW SHOWING','FOOD & BEVERAGES','CHECKOUT'].map((tab,i)=>(
+            {['NOW SHOWING','CHECKOUT'].map((tab,i)=>(
               <button key={tab} className={`px-5 py-3 text-[13px] font-extrabold uppercase tracking-wider whitespace-nowrap transition-colors ${
                 i===0?'text-[#00a8cc] border-b-2 border-[#00a8cc] -mb-px':'text-gray-500 hover:text-gray-900'
               }`}>{tab}</button>

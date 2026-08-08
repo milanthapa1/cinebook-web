@@ -43,7 +43,7 @@ export const PaymentPage: React.FC = () => {
             refId: `MOCK_TXN_${Date.now()}`,
           });
           if (verifyResult) {
-            navigate(`/ticket-confirmation?bookingId=${bookingId}`);
+            navigate(`/ticket-confirmation/${bookingId}`);
           }
         } catch (vErr: any) {
           setErrorMsg(vErr.response?.data?.message || 'Payment verification failed.');
@@ -81,7 +81,6 @@ export const PaymentPage: React.FC = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-gray-400">Now Showing</span>
-          <span className="text-gray-400">Food & Beverages</span>
           <span className="text-[#00a8cc] border-b-2 border-[#00a8cc] pb-0.5">Checkout</span>
         </div>
       </div>

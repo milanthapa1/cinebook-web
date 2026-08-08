@@ -1,29 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Search, User, LogOut, ChevronDown, TicketCheck, Shield, Ticket } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/useAuthStore';
 import { useLocationStore, useLiveLocations } from '../../features/location/useLocationStore';
-import { ALL_MOVIES_DATA } from '../../features/movies/moviesData';
+import { useMovies } from '../../features/movies/useMovies';
+import { useShowtimes } from '../../features/showtimes/useShowtimes';
+import { generateBookingDates, formatShowtimeClock } from '../../features/showtimes/showtimeHelpers';
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
-const generateDates = () => {
-  const dates: { label: string; val: string }[] = [];
-  const today = new Date();
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const label =
-      i === 0
-        ? `Today, ${d.getDate()} ${monthNames[d.getMonth()]}`
-        : `${dayNames[d.getDay()]}, ${d.getDate()} ${monthNames[d.getMonth()]}`;
-    dates.push({ label, val: label });
-  }
-  return dates;
-};
-
-const TIME_SLOTS = ['10:00 AM', '01:00 PM', '03:30 PM', '06:15 PM', '08:45 PM', '11:00 PM'];
 
 // ─── Custom Dropdown ──────────────────────────────────────────────────────────
 interface DropdownOption { label: string; value: string }
@@ -206,8 +190,8 @@ export const Navbar: React.FC = () => {
   const { selectedLocation, setSelectedLocation } = useLocationStore();
   const { liveMap, locationNames } = useLiveLocations();
   const cinemasForLocation = liveMap[selectedLocation] || liveMap[Object.keys(liveMap)[0]] || [];
-  const nowShowingMovies = ALL_MOVIES_DATA.filter((m) => m.isShowing);
-  const dates = generateDates();
+  const { data: moviesData } = useMovies({ isShowing: 'true' });
+  const dates = generateBookingDates();
 
   const [qCinema, setQCinema] = useState('');
   const [qMovie, setQMovie] = useState('');
@@ -227,6 +211,29 @@ export const Navbar: React.FC = () => {
   const step3Done = step2Done && qDate !== '';
   const allDone = step3Done && qTime !== '';
 
+  const selectedCinema = cinemasForLocation.find((c) => c.id === qCinema);
+
+  const { data: showtimesData } = useShowtimes({
+    date: qDate,
+    cinemaId: qCinema,
+    movieId: qMovie || undefined,
+  });
+
+  const timeOptions = useMemo(() => {
+    if (!showtimesData) return [];
+    const seen = new Set<string>();
+    return showtimesData
+      .map((showtime) => ({
+        label: formatShowtimeClock(showtime.startsAt),
+        value: showtime.id,
+      }))
+      .filter((option) => {
+        if (seen.has(option.value)) return false;
+        seen.add(option.value);
+        return true;
+      });
+  }, [showtimesData]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -234,10 +241,9 @@ export const Navbar: React.FC = () => {
 
   const handleQuickBooking = () => {
     if (!allDone) return;
-    // Encode all selections into the URL so ShowtimesPage can pre-populate filters
     const params = new URLSearchParams({
       movieId: qMovie,
-      cinema: qCinema,
+      cinema: selectedCinema?.name ?? '',
       date: qDate,
       time: qTime,
     });
@@ -245,10 +251,9 @@ export const Navbar: React.FC = () => {
   };
 
   // Build option arrays for each dropdown
-  const cinemaOptions: DropdownOption[] = cinemasForLocation.map((c) => ({ label: c.name, value: c.name }));
-  const movieOptions: DropdownOption[] = nowShowingMovies.map((m) => ({ label: m.title, value: m.id }));
-  const dateOptions: DropdownOption[] = dates.map((d) => ({ label: d.label, value: d.val }));
-  const timeOptions: DropdownOption[] = TIME_SLOTS.map((t) => ({ label: t, value: t }));
+  const cinemaOptions: DropdownOption[] = cinemasForLocation.map((c) => ({ label: c.name, value: c.id }));
+  const movieOptions: DropdownOption[] = (moviesData ?? []).map((m) => ({ label: m.title, value: m.id }));
+  const dateOptions: DropdownOption[] = dates.map((d) => ({ label: d.label, value: d.iso }));
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
