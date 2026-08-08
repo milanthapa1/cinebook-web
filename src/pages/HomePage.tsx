@@ -58,10 +58,20 @@ export const HomePage: React.FC = () => {
                 style={{ width: '100%' }}
               >
                 {/* Full-bleed background image */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${bgImage})` }}
-                />
+                {movie.bannerUrl ? (
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${bgImage})` }}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-black flex items-center justify-center">
+                    <img
+                      src={bgImage}
+                      alt={movie.title}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                )}
 
                 {/* Left-side dark gradient for text legibility only — no full overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
