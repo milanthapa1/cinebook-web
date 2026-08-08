@@ -304,20 +304,20 @@ export const AdminSeatsPage: React.FC = () => {
           ) : (
             <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5 overflow-x-auto">
               {/* Screen indicator */}
-              <div className="max-w-2xl mx-auto">
-                <div className="w-full h-2 bg-[#00a8cc] rounded-t-full opacity-70" />
+              <div className="max-w-2xl mx-auto text-center">
+                <div className="mx-auto w-full max-w-3xl h-2 bg-[#00a8cc] rounded-t-full opacity-70" />
                 <p className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mt-1.5 mb-6">Screen</p>
               </div>
 
               {/* Rows */}
-              <div className="space-y-2 min-w-max mx-auto">
+              <div className="flex flex-col items-center gap-2 min-w-max mx-auto">
                 {rows.map(row => {
                   const rowSeats = seats.filter(s => s.row === row).sort((a,b) => a.number - b.number);
                   const allRowSel = rowSeats.every(s => selected.has(s.id));
                   const someRowSel = rowSeats.some(s => selected.has(s.id));
 
                   return (
-                    <div key={row} className="flex items-center gap-3">
+                    <div key={row} className="flex items-center gap-3 justify-center w-full">
                       {/* Row label */}
                       <button
                         onClick={() => toggleRow(row)}
