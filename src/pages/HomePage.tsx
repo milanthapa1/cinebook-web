@@ -7,7 +7,9 @@ import { ALL_MOVIES_DATA } from '../features/movies/moviesData';
 const normaliseMovie = (m: any) => ({
   ...m,
   releaseDate: typeof m.releaseDate === 'string'
-    ? m.releaseDate
+    ? /^\d{4}-\d{2}-\d{2}T/.test(m.releaseDate)
+      ? new Date(m.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
+      : m.releaseDate
     : new Date(m.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase(),
   format: Array.isArray(m.format) ? m.format : [m.format],
   genre: Array.isArray(m.genre) ? m.genre : [m.genre],
