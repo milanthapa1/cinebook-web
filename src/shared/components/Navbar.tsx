@@ -190,7 +190,7 @@ export const Navbar: React.FC = () => {
   const { selectedLocation, setSelectedLocation } = useLocationStore();
   const { liveMap, locationNames } = useLiveLocations();
   const cinemasForLocation = liveMap[selectedLocation] || liveMap[Object.keys(liveMap)[0]] || [];
-  const { data: moviesData } = useMovies({ isShowing: 'true' });
+  const { data: moviesData } = useMovies({ isShowing: true });
   const dates = generateBookingDates();
 
   const [qCinema, setQCinema] = useState('');

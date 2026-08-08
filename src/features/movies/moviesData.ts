@@ -18,6 +18,26 @@ export interface MovieDetailItem {
 
 export const ALL_MOVIES_DATA: MovieDetailItem[] = [
   {
+    id: 'mov_intothewild',
+    title: 'Into the Wild',
+    year: '2026',
+    synopsis: 'An inspiring adventure of a young man who leaves society behind to embark on a solitary journey into the Alaskan wilderness.',
+    posterUrl: 'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=800',
+    trailerUrl: 'https://www.youtube.com/embed/g7ArZ7VD-y0',
+    genre: ['Adventure', 'Biography', 'Drama'],
+    language: 'English',
+    format: ['IMAX 2D', '4K LASER'],
+    runtimeMins: 148,
+    rating: 'PG',
+    badge: 'Trending',
+    releaseDate: '01 AUG 2026',
+    isShowing: true,
+    cast: [
+      { name: 'Emile Hirsch', role: 'Christopher McCandless', photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+      { name: 'Marcia Gay Harden', role: 'Billie McCandless', photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
+    ],
+  },
+  {
     id: 'mov_spiderverse',
     title: 'Spider-Man: Brand New Day',
     year: '2026',

@@ -24,6 +24,19 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
   const { data: seats, isLoading } = useSeats(showtimeId);
   const { selectedSeats, seatError, clearSeatError, toggleSeat } = useSeatStore();
 
+  useEffect(() => {
+    if (seats?.length && selectedSeats.length) {
+      const unavailable = new Set(
+        seats.filter(s => s.status === 'BOOKED' || (s.status === 'HELD' && !s.heldByCurrentUser)).map(s => s.id)
+      );
+      selectedSeats.forEach(s => {
+        if (unavailable.has(s.id)) {
+          toggleSeat(s);
+        }
+      });
+    }
+  }, [seats]);
+
   if (isLoading) return (
     <div className="space-y-4 py-6">
       <div className="max-w-xl mx-auto text-center">
@@ -76,16 +89,20 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
                   <span className="w-5 text-center text-[11px] font-semibold text-[#00a8cc] shrink-0">{row}</span>
                   <div className="flex gap-1.5">
                     {rowSeats.map(seat => {
-                      const isSel = selectedSeats.some(s => s.id === seat.id);
                       const isUnavail = seat.status === 'BOOKED' || (seat.status === 'HELD' && !seat.heldByCurrentUser);
+                      const isSel = !isUnavail && selectedSeats.some(s => s.id === seat.id);
                       return (
                         <button key={seat.id} disabled={isUnavail}
-                          onClick={() => !isUnavail && toggleSeat({ id: seat.id, row: seat.row, number: seat.number, type: seat.type as any, price: seat.price })}
-                          title={`${seat.row}${seat.number} — NPR ${seat.price}`}
+                          onClick={() => {
+                            if (!isUnavail) {
+                              toggleSeat({ id: seat.id, row: seat.row, number: seat.number, type: seat.type as any, price: seat.price });
+                            }
+                          }}
+                          title={isUnavail ? `Seat ${seat.row}${seat.number} — BOOKED` : `${seat.row}${seat.number} — NPR ${seat.price}`}
                           className={`w-6 h-6 rounded text-[9px] font-semibold transition-all border flex items-center justify-center ${
-                            isUnavail ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                            isUnavail ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed pointer-events-none'
                             : isSel ? 'bg-amber-400 border-amber-300 text-black scale-110'
-                            : seat.status === 'HELD' ? 'bg-orange-100 border-orange-300 text-orange-600 cursor-not-allowed'
+                            : seat.status === 'HELD' ? 'bg-orange-100 border-orange-300 text-orange-600 cursor-not-allowed pointer-events-none'
                             : 'bg-white border-[#00a8cc] text-[#00a8cc] hover:bg-[#00a8cc] hover:text-white'
                           }`}
                         >{seat.number}</button>

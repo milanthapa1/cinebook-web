@@ -3,6 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ShieldCheck, AlertCircle, Loader2, ChevronLeft, CreditCard } from 'lucide-react';
 import { useBookingDetail, useInitiatePayment, useVerifyPayment } from '../features/booking/useBookings';
 
+import { useSeatStore } from '../features/seat-selection/useSeatStore';
+
 export const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get('bookingId') || '';
@@ -43,6 +45,7 @@ export const PaymentPage: React.FC = () => {
             refId: `MOCK_TXN_${Date.now()}`,
           });
           if (verifyResult) {
+            useSeatStore.getState().clearSelection();
             navigate(`/ticket-confirmation/${bookingId}`);
           }
         } catch (vErr: any) {
