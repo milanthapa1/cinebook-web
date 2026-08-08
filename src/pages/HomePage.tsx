@@ -55,7 +55,7 @@ export const HomePage: React.FC = () => {
               <div
                 key={movie.id}
                 className="relative h-full shrink-0"
-                style={{ width: `${100 / heroMovies.length}%` }}
+                style={{ width: '100%' }}
               >
                 {/* Full-bleed background image */}
                 <div
