@@ -8,7 +8,7 @@ const FAQS = [
   },
   {
     q: 'Which payment methods are accepted for online booking?',
-    a: 'We support instant server-verified payments via Khalti Digital Wallet and eSewa e-Payment gateway.',
+    a: 'We support instant server-verified payments via eSewa e-Payment gateway.',
   },
   {
     q: 'Can I cancel or modify my confirmed booking?',

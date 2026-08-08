@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2, AlertCircle, Loader2, ChevronLeft, CreditCard, Wallet } from 'lucide-react';
+import { ShieldCheck, AlertCircle, Loader2, ChevronLeft, CreditCard } from 'lucide-react';
 import { useBookingDetail, useInitiatePayment, useVerifyPayment } from '../features/booking/useBookings';
 
 export const PaymentPage: React.FC = () => {
@@ -8,7 +8,7 @@ export const PaymentPage: React.FC = () => {
   const bookingId = searchParams.get('bookingId') || '';
   const navigate = useNavigate();
 
-  const [provider, setProvider] = useState<'khalti' | 'esewa'>('khalti');
+  const provider: 'esewa' = 'esewa';
   const [isSimulating, setIsSimulating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -112,69 +112,40 @@ export const PaymentPage: React.FC = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 shadow-sm">
           <h3 className="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Select Digital Wallet</h3>
 
-          <div className="grid grid-cols-2 gap-4">
-            {/* Khalti */}
-            <button
-              onClick={() => setProvider('khalti')}
-              className={`p-5 rounded-xl border transition-all text-left space-y-2 ${
-                provider === 'khalti'
-                  ? 'bg-purple-50 border-purple-400'
-                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Wallet className="w-5 h-5 text-purple-600" />
-                  <span className="font-extrabold text-purple-600 text-base">Khalti</span>
+          <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50 shadow-sm">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-emerald-600" />
+                <div>
+                  <p className="font-extrabold text-emerald-600 text-base">eSewa</p>
+                  <p className="text-[11px] text-gray-500">Direct e-payment via eSewa account</p>
                 </div>
-                {provider === 'khalti' && <CheckCircle2 className="w-4 h-4 text-purple-600" />}
               </div>
-              <p className="text-[11px] text-gray-500">Instant checkout & mobile wallet PIN</p>
-            </button>
-
-            {/* eSewa */}
-            <button
-              onClick={() => setProvider('esewa')}
-              className={`p-5 rounded-xl border transition-all text-left space-y-2 ${
-                provider === 'esewa'
-                  ? 'bg-emerald-50 border-emerald-400'
-                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-emerald-600" />
-                  <span className="font-extrabold text-emerald-600 text-base">eSewa</span>
-                </div>
-                {provider === 'esewa' && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-              </div>
-              <p className="text-[11px] text-gray-500">Direct e-payment via eSewa account</p>
-            </button>
+              <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+                Selected
+              </span>
+            </div>
           </div>
 
           {/* Security Notice */}
           <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-2.5 text-xs text-gray-500">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>256-bit encrypted & server-verified transaction. No card data stored locally.</span>
+            <span>256-bit encrypted & server-verified transaction via eSewa. No card data stored locally.</span>
           </div>
 
           {/* Pay Button */}
           <button
             onClick={handlePay}
             disabled={isSimulating}
-            className={`w-full py-4 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.99] ${
-              provider === 'khalti'
-                ? 'bg-purple-600 hover:bg-purple-500'
-                : 'bg-emerald-600 hover:bg-emerald-500'
-            }`}
+            className="w-full py-4 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.99] bg-emerald-600 hover:bg-emerald-500"
           >
             {isSimulating ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Verifying with {provider === 'khalti' ? 'Khalti' : 'eSewa'}...
+                Verifying with eSewa...
               </>
             ) : (
-              `Pay NPR ${Number(booking.totalAmount).toFixed(2)} via ${provider === 'khalti' ? 'Khalti' : 'eSewa'}`
+              `Pay NPR ${Number(booking.totalAmount).toFixed(2)} via eSewa`
             )}
           </button>
         </div>

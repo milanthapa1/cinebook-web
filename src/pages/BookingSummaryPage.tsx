@@ -180,7 +180,7 @@ export const BookingSummaryPage: React.FC = () => {
 
           <p className="text-center text-[10px] text-slate-500 flex items-center justify-center gap-1.5">
             <ShieldCheck className="w-3 h-3 text-slate-600" />
-            Seats held for 10 minutes. Payment via Khalti or eSewa.
+            Seats held for 10 minutes. Payment via eSewa.
           </p>
         </div>
       </div>

@@ -41,9 +41,7 @@ export const PrivacyPage: React.FC = () => {
             3. Third-Party Integrations
           </h2>
           <p>
-            Payment information is processed securely through Khalti and
-            eSewa. Profile images are stored securely using Cloudinary without
-            exposing sensitive API credentials.
+            Payment information is processed securely through eSewa. Profile images are stored securely using Cloudinary without exposing sensitive API credentials.
           </p>
         </section>
       </div>

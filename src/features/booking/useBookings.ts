@@ -85,7 +85,7 @@ export const useCreateBooking = () => {
 
 export const useInitiatePayment = () => {
   return useMutation({
-    mutationFn: async (payload: { bookingId: string; provider: 'khalti' | 'esewa' }) => {
+    mutationFn: async (payload: { bookingId: string; provider: 'esewa' }) => {
       const res = await apiClient.post('/payments/initiate', payload);
       return res.data.data;
     },
@@ -98,7 +98,7 @@ export const useVerifyPayment = () => {
   return useMutation({
     mutationFn: async (payload: {
       bookingId: string;
-      provider: 'khalti' | 'esewa';
+      provider: 'esewa';
       token?: string;
       pidx?: string;
       refId?: string;

@@ -30,9 +30,7 @@ export const TermsPage: React.FC = () => {
             2. Payments & Gateway Verification
           </h2>
           <p>
-            All digital payments processed through Khalti or eSewa are verified
-            securely. Once payment is successfully confirmed, ticket issuance is
-            final and non-transferable.
+            All digital payments processed through eSewa are verified securely. Once payment is successfully confirmed, ticket issuance is final and non-transferable.
           </p>
         </section>
 
