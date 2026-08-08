@@ -358,7 +358,10 @@ export const useCreateLocation = () => {
   return useMutation({
     mutationFn: (data: { name: string; isActive?: boolean }) =>
       apiClient.post('/admin/locations', data).then(r => r.data.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'locations'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
@@ -367,7 +370,10 @@ export const useUpdateLocation = () => {
   return useMutation({
     mutationFn: ({ id, ...data }: { id: string; name?: string; isActive?: boolean }) =>
       apiClient.patch(`/admin/locations/${id}`, data).then(r => r.data.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'locations'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
@@ -375,7 +381,10 @@ export const useDeleteLocation = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/admin/locations/${id}`).then(r => r.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'locations'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
@@ -394,7 +403,11 @@ export const useCreateCinema = () => {
   return useMutation({
     mutationFn: (data: { name: string; locationId: string; address?: string; phone?: string; mapUrl?: string; isActive?: boolean }) =>
       apiClient.post('/admin/cinemas', data).then(r => r.data.data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] }); qc.invalidateQueries({ queryKey: ['admin', 'locations'] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
@@ -403,7 +416,11 @@ export const useUpdateCinema = () => {
   return useMutation({
     mutationFn: ({ id, ...data }: Partial<AdminCinema> & { id: string }) =>
       apiClient.patch(`/admin/cinemas/${id}`, data).then(r => r.data.data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] }); qc.invalidateQueries({ queryKey: ['admin', 'locations'] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
@@ -411,7 +428,11 @@ export const useDeleteCinema = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/admin/cinemas/${id}`).then(r => r.data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] }); qc.invalidateQueries({ queryKey: ['admin', 'locations'] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'cinemas'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'locations'] });
+      qc.invalidateQueries({ queryKey: ['locations', 'public'] });
+    },
   });
 };
 
