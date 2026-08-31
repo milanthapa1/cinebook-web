@@ -79,7 +79,7 @@ const LocationForm: React.FC<{
           <button onClick={() => setIsActive(v => !v)}
             className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}>
             {isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-            {isActive ? 'Active — visible to customers' : 'Inactive — hidden from customers'}
+            {isActive ? 'Active - visible to customers' : 'Inactive - hidden from customers'}
           </button>
         </div>
         <div className="flex gap-3 px-5 py-4 border-t border-gray-200">
@@ -150,7 +150,7 @@ const CinemaForm: React.FC<{
           <button onClick={() => set('isActive', !form.isActive)}
             className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${form.isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}>
             {form.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-            {form.isActive ? 'Active — visible to customers' : 'Inactive — hidden from customers'}
+            {form.isActive ? 'Active - visible to customers' : 'Inactive - hidden from customers'}
           </button>
         </div>
         <div className="flex gap-3 px-5 py-4 border-t border-gray-200">
@@ -238,7 +238,7 @@ export const AdminLocationsPage: React.FC = () => {
           <div>
             <p className="font-bold text-amber-600">{unassignedHalls.length} hall{unassignedHalls.length !== 1 ? 's' : ''} not assigned to any cinema</p>
             <p className="text-gray-600 mt-0.5">
-              {unassignedHalls.map(h => h.name).join(', ')} — expand a cinema below to assign them.
+              {unassignedHalls.map(h => h.name).join(', ')} - expand a cinema below to assign them.
             </p>
           </div>
         </div>

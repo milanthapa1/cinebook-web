@@ -89,8 +89,12 @@ export const useBookingDetail = (id: string) => {
           saveBookingToLocalStorage(res.data.data);
           return res.data.data as Booking;
         }
-      } catch (e) {
-        // Fallback to localStorage if API fails or returns 404
+      } catch (e: any) {
+        // Only serve the offline/refresh cache when the API was unreachable
+        // (no response). If the server answered at all (404/401/403), trust it —
+        // a booking must not come back from localStorage after the server
+        // confirmed it doesn't exist or the user lost access to it.
+        if (e?.response) throw new Error('Booking not found');
       }
       const cached = getBookingFromLocalStorage(id);
       if (cached) return cached;
@@ -115,8 +119,9 @@ export const useUserBookings = () => {
           apiBookings = res.data.data;
           apiBookings.forEach(saveBookingToLocalStorage);
         }
-      } catch (e) {
-        // Fallback to localStorage
+      } catch (e: any) {
+        // Surface server errors instead of silently serving the stale cache.
+        if (e?.response) throw e;
       }
       const localBookings = getUserBookingsFromLocalStorage();
       const combinedMap = new Map<string, Booking>();
@@ -167,16 +172,24 @@ export const useVerifyPayment = () => {
       token?: string;
       pidx?: string;
       refId?: string;
+      transaction_code?: string;
+      transaction_uuid?: string;
+      status?: string;
+      signed_field_names?: string;
+      signature?: string;
+      product_code?: string;
+      amount?: number;
     }) => {
       const res = await apiClient.post('/payments/verify', payload);
       const data = res.data.data;
-      if (data?.id) {
-        saveBookingToLocalStorage(data);
-      } else {
-        const existing = getBookingFromLocalStorage(payload.bookingId);
-        if (existing) {
-          existing.status = 'CONFIRMED';
-          saveBookingToLocalStorage(existing);
+      // Only the server decides a booking is confirmed. If it responded with
+      // an explicit success, mirror just that status into the offline cache so
+      // the ticket page shows truth even if the next refetch fails.
+      if (data?.bookingId && data?.status === 'CONFIRMED') {
+        const cached = getBookingFromLocalStorage(payload.bookingId);
+        if (cached) {
+          cached.status = 'CONFIRMED';
+          saveBookingToLocalStorage(cached);
         }
       }
       return data;

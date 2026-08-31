@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { Navbar } from './shared/components/Navbar';
 import { Footer } from './shared/components/Footer';
+import { CitySelectModal } from './features/location/CitySelectModal';
 
 import { HomePage } from './pages/HomePage';
 import { MoviesPage } from './pages/MoviesPage';
@@ -13,6 +14,7 @@ import { PaymentPage } from './pages/PaymentPage';
 import { TicketConfirmationPage } from './pages/TicketConfirmationPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { GoogleCallbackPage } from './pages/GoogleCallbackPage';
 import { UserProfilePage } from './pages/UserProfilePage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
@@ -22,6 +24,7 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Admin
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminLayout } from './features/admin/AdminLayout';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminMoviesPage } from './pages/admin/AdminMoviesPage';
@@ -32,10 +35,11 @@ import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminSeatsPage } from './pages/admin/AdminSeatsPage';
 import { AdminLocationsPage } from './pages/admin/AdminLocationsPage';
 
-// Public layout — wraps all non-admin pages with Navbar + Footer
+// Public layout - wraps all non-admin pages with Navbar + Footer
 const PublicLayout: React.FC = () => (
   <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col selection:bg-[#00a8cc] selection:text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
     <Navbar />
+    <CitySelectModal />
     <main className="flex-1">
       <Outlet />
     </main>
@@ -52,6 +56,8 @@ export const App: React.FC = () => {
   return (
     <Routes>
       {/* ── Admin routes (own layout, no Navbar/Footer) ── */}
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route path="/google/callback" element={<GoogleCallbackPage />} />
       <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
       <Route path="/admin/movies" element={<AdminRoute><AdminMoviesPage /></AdminRoute>} />
       <Route path="/admin/halls" element={<AdminRoute><AdminHallsPage /></AdminRoute>} />

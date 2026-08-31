@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface SelectedSeat {
   id: string;
@@ -20,33 +21,46 @@ interface SeatSelectionState {
   setExpiresAt: (expiresAt: string | null) => void;
 }
 
-export const useSeatStore = create<SeatSelectionState>((set) => ({
-  showtimeId: null,
-  selectedSeats: [],
-  expiresAt: null,
-  seatError: null,
-  setShowtimeId: (id) =>
-    set((state) => (state.showtimeId !== id ? { showtimeId: id, selectedSeats: [], expiresAt: null, seatError: null } : state)),
+export const useSeatStore = create<SeatSelectionState>()(
+  persist(
+    (set) => ({
+      showtimeId: null,
+      selectedSeats: [],
+      expiresAt: null,
+      seatError: null,
+      setShowtimeId: (id) =>
+        set((state) => (state.showtimeId !== id ? { showtimeId: id, selectedSeats: [], expiresAt: null, seatError: null } : state)),
 
-  toggleSeat: (seat) =>
-    set((state) => {
-      const exists = state.selectedSeats.some((s) => s.id === seat.id);
-      if (exists) {
-        return { selectedSeats: state.selectedSeats.filter((s) => s.id !== seat.id), seatError: null };
-      }
-      if (state.selectedSeats.length >= 8) {
-        return { seatError: 'Maximum 8 seats per booking.' };
-      }
-      return { selectedSeats: [...state.selectedSeats, seat], seatError: null };
+      toggleSeat: (seat) =>
+        set((state) => {
+          const exists = state.selectedSeats.some((s) => s.id === seat.id);
+          if (exists) {
+            return { selectedSeats: state.selectedSeats.filter((s) => s.id !== seat.id), seatError: null };
+          }
+          if (state.selectedSeats.length >= 8) {
+            return { seatError: 'Maximum 8 seats per booking.' };
+          }
+          return { selectedSeats: [...state.selectedSeats, seat], seatError: null };
+        }),
+
+      clearSelection: () => set(() => ({
+        selectedSeats: [],
+        expiresAt: null,
+        seatError: null,
+      })),
+
+      clearSeatError: () => set({ seatError: null }),
+
+      setExpiresAt: (expiresAt) => set({ expiresAt }),
     }),
-
-  clearSelection: () => set(() => ({
-    selectedSeats: [],
-    expiresAt: null,
-    seatError: null,
-  })),
-
-  clearSeatError: () => set({ seatError: null }),
-
-  setExpiresAt: (expiresAt) => set({ expiresAt }),
-}));
+    {
+      name: 'cinebook-seat-selection',
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({
+        showtimeId: state.showtimeId,
+        selectedSeats: state.selectedSeats,
+        expiresAt: state.expiresAt,
+      }),
+    }
+  )
+);

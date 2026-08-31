@@ -4,9 +4,7 @@ import {
   ChevronLeft, ChevronDown, ChevronUp, Play, ShieldAlert, X,
   ArrowRight, CheckCircle2, Film, CalendarDays,
 } from 'lucide-react';
-import { getMovieById } from '../features/movies/moviesData';
-import { useMovieDetail } from '../features/movies/useMovies';
-import { useMovies } from '../features/movies/useMovies';
+import { useMovieDetail, useMovies } from '../features/movies/useMovies';
 import { useLocationStore, useLiveLocations } from '../features/location/useLocationStore';
 import { useShowtimes } from '../features/showtimes/useShowtimes';
 import {
@@ -61,7 +59,7 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
     const rowSeats = seats.filter(s => s.row === row);
     const type = rowSeats[0]?.type ?? 'STANDARD';
     const price = rowSeats[0]?.price ?? 0;
-    const label = type === 'RECLINER' ? `VIP RECLINER — NPR ${price}` : type === 'PREMIUM' ? `PREMIUM — NPR ${price}` : `STANDARD — NPR ${price}`;
+    const label = type === 'RECLINER' ? `VIP RECLINER - NPR ${price}` : type === 'PREMIUM' ? `PREMIUM - NPR ${price}` : `STANDARD - NPR ${price}`;
     if (!tierMap[label]) tierMap[label] = { seats: [], price, label };
     tierMap[label].seats.push(...rowSeats);
   });
@@ -98,7 +96,7 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
                               toggleSeat({ id: seat.id, row: seat.row, number: seat.number, type: seat.type as any, price: seat.price });
                             }
                           }}
-                          title={isUnavail ? `Seat ${seat.row}${seat.number} — BOOKED` : `${seat.row}${seat.number} — NPR ${seat.price}`}
+                          title={isUnavail ? `Seat ${seat.row}${seat.number} - BOOKED` : `${seat.row}${seat.number} - NPR ${seat.price}`}
                           className={`w-6 h-6 rounded text-[9px] font-semibold transition-all border flex items-center justify-center ${
                             isUnavail ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed pointer-events-none'
                             : isSel ? 'bg-amber-400 border-amber-300 text-black scale-110'
@@ -126,7 +124,7 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
   );
 };
 
-// ─── Browse Mode — shown when no movieId in URL ───────────────────────────────
+// ─── Browse Mode - shown when no movieId in URL ───────────────────────────────
 const BrowseShowtimes: React.FC = () => {
   const navigate = useNavigate();
   const bookingDates = useMemo(() => generateBookingDates(), []);
@@ -253,7 +251,7 @@ const BrowseShowtimes: React.FC = () => {
   );
 };
 
-// ─── Movie Mode — shown when ?movieId= is present ────────────────────────────
+// ─── Movie Mode - shown when ?movieId= is present ────────────────────────────
 const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -266,8 +264,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
     ? quickDate : bookingDates[0].iso;
 
   const { data: apiMovie, isLoading: movieLoading } = useMovieDetail(movieIdParam);
-  const staticFallback = !movieLoading && !apiMovie ? getMovieById(movieIdParam) : null;
-  const rawMovie = apiMovie ?? staticFallback;
+  const rawMovie = apiMovie;
 
   const { selectedLocation } = useLocationStore();
   const { liveMap } = useLiveLocations();
@@ -368,7 +365,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
     </div>
   );
 
-  // Movie not found — show a helpful message instead of eternal skeleton
+  // Movie not found - show a helpful message instead of eternal skeleton
   if (!rawMovie) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center space-y-4 px-4">
@@ -617,7 +614,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
               <div className="flex items-center gap-2.5">
                 <span className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center shrink-0 ${selectedSlot ? 'bg-[#00a8cc] text-white' : 'bg-gray-200 text-gray-400'}`}>2</span>
                 <span className="text-sm font-semibold text-gray-900">Pick Seats</span>
-                {!selectedSlot && <span className="text-[11px] text-gray-400 ml-1">— select a showtime first</span>}
+                {!selectedSlot && <span className="text-[11px] text-gray-400 ml-1">- select a showtime first</span>}
                 {selectedSlot && <span className="text-[11px] text-gray-500 ml-1">| {movie.title}</span>}
               </div>
               {selectedSlot && (step2Expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />)}
@@ -662,7 +659,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
           <div className="w-full max-w-4xl bg-white rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Play className="w-4 h-4 text-[#00a8cc] fill-[#00a8cc]" /> {movie.title} — Trailer
+                <Play className="w-4 h-4 text-[#00a8cc] fill-[#00a8cc]" /> {movie.title} - Trailer
               </h3>
               <button onClick={() => setShowTrailerModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
                 <X className="w-5 h-5" />
@@ -679,7 +676,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
   );
 };
 
-// ─── Root export — routes to browse or movie mode ────────────────────────────
+// ─── Root export - routes to browse or movie mode ────────────────────────────
 export const ShowtimesPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const movieIdParam = searchParams.get('movieId') || '';

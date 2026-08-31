@@ -43,6 +43,6 @@ export const useShowtimes = (params: ShowtimesQuery) => {
       });
       return res.data.data as Showtime[];
     },
-    enabled: !!date, // movieId is now optional — page works in browse mode too
+    enabled: !!date, // movieId is now optional - page works in browse mode too
   });
 };

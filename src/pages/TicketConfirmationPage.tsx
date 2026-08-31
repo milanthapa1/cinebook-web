@@ -4,38 +4,13 @@ import { QRCodeSVG } from 'qrcode.react';
 import { CheckCircle2, Printer, Film, MapPin, Clock, Ticket, ChevronRight } from 'lucide-react';
 import { useBookingDetail } from '../features/booking/useBookings';
 
-function formatRealHallName(nameOrId?: string): string {
-  if (!nameOrId) return 'Audi 1';
-  const s = nameOrId.trim();
-  if (s === 'Hall 1' || s === 'hall_1' || s === 'hall-1' || s === 'Audi 1 (IMAX Laser)') return 'Audi 1';
-  if (s === 'Hall 2' || s === 'hall_2' || s === 'hall-2' || s === 'Audi 2 (Dolby Cinema)') return 'Audi 2';
-  if (s === 'Hall 3' || s === 'hall_3' || s === 'hall-3' || s === 'Audi 3 (VIP Lounge)') return 'Audi 3';
-  if (/^c[a-z0-9]{15,}$/i.test(s) || /^[a-z0-9]{20,}$/i.test(s)) return 'Audi 1';
-  return s;
-}
-
-function formatMovieTitle(title?: string): string {
-  if (!title) return 'Cinema Movie';
-  if (/^c[a-z0-9]{15,}$/i.test(title) || /^[a-z0-9]{20,}$/i.test(title)) {
-    return 'Into the Wild';
-  }
-  return title;
-}
-
-/** Extract human-readable seat label (e.g. "C5") from any seatId format */
+// The booking response always carries authoritative seat labels (row + number)
+// from the server. No regex/CUID guesswork is needed or acceptable here.
 function parseSeatLabel(s: { seatId: string; seatDetails?: { row: string; number: number } | null }): string {
   if (s.seatDetails?.row && s.seatDetails?.number) {
     return `${s.seatDetails.row}${s.seatDetails.number}`;
   }
-  const id = s.seatId || '';
-  const trail = id.match(/([A-Fa-f])([0-9]+)$/);
-  if (trail) return `${trail[1].toUpperCase()}${trail[2]}`;
-  const all = Array.from(id.matchAll(/([A-Fa-f])([0-9]+)/g));
-  if (all.length > 0) {
-    const last = all[all.length - 1];
-    return `${last[1].toUpperCase()}${last[2]}`;
-  }
-  return id;
+  return s.seatId;
 }
 
 export const TicketConfirmationPage: React.FC = () => {
@@ -103,12 +78,12 @@ export const TicketConfirmationPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-6 justify-between items-start">
               <div className="space-y-2.5">
                 <h2 className="text-2xl font-black text-gray-900">
-                  {formatMovieTitle(booking.showtime?.movie?.title)}
+                  {booking.showtime?.movie?.title ?? 'Cinema Movie'}
                 </h2>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-gray-700 font-semibold">
                   <span className="flex items-center gap-1 text-[#00a8cc]">
                     <MapPin className="w-3.5 h-3.5" />
-                    {formatRealHallName(booking.showtime?.hall?.name)}
+                    {booking.showtime?.hall?.name ?? 'Cinema'}
                   </span>
                   <span className="text-gray-400">•</span>
                   <span className="flex items-center gap-1">
@@ -140,7 +115,7 @@ export const TicketConfirmationPage: React.FC = () => {
               <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200">
                 <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1">Seats</span>
                 <span className="text-sm font-extrabold text-gray-900">
-                  {booking.seats.map(parseSeatLabel).join(', ') || '—'}
+                  {booking.seats.map(parseSeatLabel).join(', ') || '-'}
                 </span>
               </div>
               <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200">

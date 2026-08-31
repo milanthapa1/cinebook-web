@@ -53,13 +53,13 @@ const BookingModal: React.FC<{ id: string; onClose: () => void }> = ({ id, onClo
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Customer</p>
                 <p className="text-gray-900 font-semibold">{(b as any).user?.name}</p>
                 <p className="text-gray-500">{(b as any).user?.email}</p>
-                <p className="text-gray-500">{(b as any).user?.phone || '—'}</p>
+                <p className="text-gray-500">{(b as any).user?.phone || '-'}</p>
               </div>
               <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 space-y-1.5">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Showtime</p>
                 <p className="text-gray-900 font-semibold truncate">{(b as any).showtime?.movie?.title}</p>
                 <p className="text-gray-500 flex items-center gap-1"><MapPin className="w-3 h-3" />{(b as any).showtime?.hall?.name}</p>
-                <p className="text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{(b as any).showtime?.startsAt ? fmt((b as any).showtime.startsAt) : '—'}</p>
+                <p className="text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{(b as any).showtime?.startsAt ? fmt((b as any).showtime.startsAt) : '-'}</p>
               </div>
             </div>
             <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 text-xs">
@@ -169,7 +169,7 @@ export const AdminBookingsPage: React.FC = () => {
                       <p className="font-semibold text-gray-900 truncate max-w-[160px]">{b.showtime?.movie?.title}</p>
                       <p className="text-gray-400 mt-0.5">{b.showtime?.hall?.name}</p>
                     </td>
-                    <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">{b.showtime?.startsAt ? fmt(b.showtime.startsAt) : '—'}</td>
+                    <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">{b.showtime?.startsAt ? fmt(b.showtime.startsAt) : '-'}</td>
                     <td className="px-5 py-3.5">
                       <span className="font-black text-gray-900">NPR {Number(b.totalAmount).toFixed(0)}</span>
                     </td>

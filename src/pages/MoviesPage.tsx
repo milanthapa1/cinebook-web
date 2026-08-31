@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Ticket, Info } from 'lucide-react';
 import { useMovies } from '../features/movies/useMovies';
-import { ALL_MOVIES_DATA } from '../features/movies/moviesData';
 
 // ─── Movie Card ───────────────────────────────────────────────────────────────
 interface MovieCardProps {
@@ -44,10 +43,10 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Dark overlay — light tint only for button legibility */}
+        {/* Dark overlay - light tint only for button legibility */}
         <div className="absolute inset-0 bg-black/20" />
 
-        {/* Status badge — top left */}
+        {/* Status badge - top left */}
         <div className="absolute top-2 left-2">
           <span className={`text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded flex items-center gap-1 ${
             movie.isShowing
@@ -59,7 +58,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           </span>
         </div>
 
-        {/* Rating badge — top right */}
+        {/* Rating badge - top right */}
         <div className="absolute top-2 right-2">
           <span className={`px-1.5 py-0.5 rounded text-[10px] font-black text-white ${
             movie.rating === 'R' ? 'bg-rose-600' :
@@ -70,7 +69,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           </span>
         </div>
 
-        {/* ── CTA Button — animates from top edge to center on hover ── */}
+        {/* ── CTA Button - animates from top edge to center on hover ── */}
         {movie.isShowing ? (
           /* NOW SHOWING: "Buy Tickets" slides from top → center, fades back top on leave */
           <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex items-center justify-center
@@ -127,27 +126,21 @@ export const MoviesPage: React.FC = () => {
     format: selectedFormat || undefined,
   });
 
-  const allMovies: any[] = apiMovies && apiMovies.length > 0 ? apiMovies : ALL_MOVIES_DATA;
+  const allMovies: any[] = apiMovies || [];
 
   const movies = useMemo(() => {
-    let list = allMovies;
-    if (apiMovies && apiMovies.length > 0) {
-      list = apiMovies;
-    } else {
-      // client-side filter on fallback
-      list = allMovies.filter(m => {
-        const q = search.toLowerCase();
-        const matchSearch = !search || m.title.toLowerCase().includes(q);
-        const matchGenre  = !selectedGenre  || (Array.isArray(m.genre)  ? m.genre.includes(selectedGenre)   : false);
-        const matchLang   = !selectedLanguage || m.language === selectedLanguage;
-        const matchFmt    = !selectedFormat  || (Array.isArray((m as any).format) ? (m as any).format.includes(selectedFormat) : false);
-        return matchSearch && matchGenre && matchLang && matchFmt;
-      });
-    }
-    if (activeTab === 'showing') return list.filter(m => m.isShowing);
-    if (activeTab === 'soon')    return list.filter(m => !m.isShowing);
-    return list;
-  }, [apiMovies, allMovies, search, selectedGenre, selectedLanguage, selectedFormat, activeTab]);
+    const filtered = allMovies.filter(m => {
+      const q = search.toLowerCase();
+      const matchSearch = !search || m.title.toLowerCase().includes(q);
+      const matchGenre  = !selectedGenre  || (Array.isArray(m.genre)  ? m.genre.includes(selectedGenre)   : false);
+      const matchLang   = !selectedLanguage || m.language === selectedLanguage;
+      const matchFmt    = !selectedFormat  || (Array.isArray((m as any).format) ? (m as any).format.includes(selectedFormat) : false);
+      return matchSearch && matchGenre && matchLang && matchFmt;
+    });
+    if (activeTab === 'showing') return filtered.filter(m => m.isShowing);
+    if (activeTab === 'soon')    return filtered.filter(m => !m.isShowing);
+    return filtered;
+  }, [allMovies, search, selectedGenre, selectedLanguage, selectedFormat, activeTab]);
 
   const nowCount  = allMovies.filter(m => m.isShowing).length;
   const soonCount = allMovies.filter(m => !m.isShowing).length;

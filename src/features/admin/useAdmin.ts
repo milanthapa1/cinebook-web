@@ -445,7 +445,7 @@ export const useAssignHallToCinema = () => {
   });
 };
 
-// ─── Public locations (no auth — for frontend pickers) ─────────────────────
+// ─── Public locations (no auth - for frontend pickers) ─────────────────────
 export const usePublicLocations = () =>
   useQuery({
     queryKey: ['locations', 'public'],

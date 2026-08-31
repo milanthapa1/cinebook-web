@@ -68,7 +68,7 @@ export const AdminUsersPage: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-3.5 text-gray-600 hidden sm:table-cell">{u.phone || '—'}</td>
+                  <td className="px-5 py-3.5 text-gray-600 hidden sm:table-cell">{u.phone || '-'}</td>
                   <td className="px-5 py-3.5 text-gray-500 hidden sm:table-cell">{fmt(u.createdAt)}</td>
                   <td className="px-5 py-3.5">
                     <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-[#00a8cc]/10 text-[#00a8cc] font-black text-xs">

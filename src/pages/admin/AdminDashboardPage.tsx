@@ -130,7 +130,7 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#00a8cc]" /> Revenue — Last 7 Days
+                <TrendingUp className="w-4 h-4 text-[#00a8cc]" /> Revenue - Last 7 Days
               </h2>
               <p className="text-[11px] text-gray-400 mt-0.5">
                 Total: <span className="font-semibold text-gray-600">NPR {totalWeekRevenue.toLocaleString()}</span>

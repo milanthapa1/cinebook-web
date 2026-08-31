@@ -180,7 +180,7 @@ export const AdminMoviesPage: React.FC = () => {
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: fd });
       const d = await r.json();
       if (d.secure_url) set('posterUrl', d.secure_url);
-      else setError('Upload failed — no URL returned');
+      else setError('Upload failed - no URL returned');
     } catch { setError('Poster upload failed'); }
     finally { setUP(false); }
   };
@@ -197,7 +197,7 @@ export const AdminMoviesPage: React.FC = () => {
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: fd });
       const d = await r.json();
       if (d.secure_url) set('bannerUrl', d.secure_url);
-      else setError('Banner upload failed — no URL returned');
+      else setError('Banner upload failed - no URL returned');
     } catch { setError('Banner upload failed'); }
     finally { setUB(false); }
   };
@@ -343,7 +343,7 @@ export const AdminMoviesPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Banner image upload — used as hero slide background */}
+              {/* Banner image upload - used as hero slide background */}
               <div className="space-y-2">
                 <Field label="Hero Banner Image">
                   <p className="text-[10px] text-gray-400 mb-1.5">Wide landscape image (1920×800 recommended) shown in the homepage hero slideshow. Falls back to poster if not set.</p>

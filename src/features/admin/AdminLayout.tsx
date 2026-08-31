@@ -101,9 +101,9 @@ const SidebarContent: React.FC<{
         ))}
       </nav>
 
-      {/* User button — ChatGPT style popover */}
+      {/* User button - ChatGPT style popover */}
       <div className="relative p-3 border-t border-gray-100" ref={popoverRef}>
-        {/* Popover menu — opens upward */}
+        {/* Popover menu - opens upward */}
         {popoverOpen && (
           <div className="absolute bottom-[72px] left-3 right-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
             {/* User info header */}
@@ -162,7 +162,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const loc = useLocation();
   const [open, setOpen] = useState(false);
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/admin/login" replace />;
   if (user.role !== 'ADMIN') return <Navigate to="/" replace />;
 
   const activeItem = ALL_NAV.find(item =>

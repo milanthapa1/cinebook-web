@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { queryClient } from '../../lib/queryClient';
+import { useSeatStore } from '../seat-selection/useSeatStore';
 
 export interface User {
   id: string;
@@ -30,11 +32,15 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           user: state.user ? { ...state.user, ...partialUser } : null,
         })),
-      logout: () => set({ user: null, accessToken: null }),
+      logout: () => {
+        useSeatStore.getState().clearSelection();
+        queryClient.clear();
+        set({ user: null, accessToken: null });
+      },
     }),
     {
       name: 'cinebook-auth',
-      // Only persist the user object — not the accessToken.
+      // Only persist the user object - not the accessToken.
       // The access token is short-lived (15 min) and is re-issued via
       // the httpOnly refresh token cookie on page reload. Persisting it
       // in localStorage is a security risk (XSS exposure).

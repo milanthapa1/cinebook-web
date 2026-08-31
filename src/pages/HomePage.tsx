@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useMovies } from '../features/movies/useMovies';
-import { ALL_MOVIES_DATA } from '../features/movies/moviesData';
 
 const normaliseMovie = (m: any) => ({
   ...m,
@@ -24,7 +23,7 @@ export const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'NOW_SHOWING' | 'COMING_SOON'>('NOW_SHOWING');
 
   const { data: apiMovies } = useMovies();
-  const allMovies = apiMovies?.length ? apiMovies.map(normaliseMovie) : ALL_MOVIES_DATA;
+  const allMovies = (apiMovies ?? []).map(normaliseMovie);
 
   const heroMovies  = allMovies.filter((m) => m.isShowing);
   const nowShowing  = allMovies.filter((m) => m.isShowing);
@@ -75,17 +74,17 @@ export const HomePage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Left-side dark gradient for text legibility only — no full overlay */}
+                {/* Left-side dark gradient for text legibility only - no full overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
 
-                {/* Content — bottom-left, minimal — exactly like QFX */}
+                {/* Content - bottom-left, minimal - exactly like QFX */}
                 <div className="absolute bottom-0 left-0 right-0 px-8 sm:px-14 pb-10 pt-16">
                   {/* NOW SHOWING label */}
                   <p className="text-[#00a8cc] text-xs font-semibold uppercase tracking-[0.2em] mb-2">
                     Now Showing
                   </p>
 
-                  {/* Movie title — large, white */}
+                  {/* Movie title - large, white */}
                   <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight drop-shadow-md max-w-2xl">
                     {movie.title}
                   </h1>

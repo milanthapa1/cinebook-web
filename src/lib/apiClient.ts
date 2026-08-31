@@ -16,13 +16,50 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// ─── Single-flight token refresh ─────────────────────────────────────────────
+// Multiple requests may fail with 401 at the same time (token expiry).
+// We share one refresh call so concurrent requests don't each hit /auth/refresh.
+let refreshPromise: Promise<string> | null = null;
+
+async function refreshAccessToken(): Promise<string> {
+  const res = await axios.post(
+    `${API_BASE_URL}/auth/refresh`,
+    {},
+    { withCredentials: true }
+  );
+  if (res.data?.success && res.data?.data?.accessToken) {
+    return res.data.data.accessToken as string;
+  }
+  throw new Error('Refresh token invalid');
+}
+
+function refreshAndStoreToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = refreshAccessToken()
+      .then((newToken) => {
+        useAuthStore.getState().setAccessToken(newToken);
+        return newToken;
+      })
+      .catch((err) => {
+        // Refresh token also expired/revoked — force re-login once,
+        // then re-throw so every waiting request rejects too.
+        useAuthStore.getState().logout();
+        throw err;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
 // Response interceptor to handle auto 401 refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Network error (API server not reachable) — don't retry, just reject
+    // Network error (API server not reachable) - don't retry, just reject
     if (!error.response) {
       return Promise.reject(error);
     }
@@ -41,20 +78,11 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const res = await axios.post(
-          `${API_BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-
-        if (res.data?.success && res.data?.data?.accessToken) {
-          const newToken = res.data.data.accessToken;
-          useAuthStore.getState().setAccessToken(newToken);
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          return apiClient(originalRequest);
-        }
-      } catch (refreshError) {
-        useAuthStore.getState().logout();
+        const newToken = await refreshAndStoreToken();
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return apiClient(originalRequest);
+      } catch {
+        return Promise.reject(error);
       }
     }
 

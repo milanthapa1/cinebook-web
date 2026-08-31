@@ -8,7 +8,7 @@ export const NotFoundPage: React.FC = () => {
       <div className="w-16 h-16 rounded-3xl bg-rose-600/20 text-rose-500 flex items-center justify-center border border-rose-500/40">
         <Film className="w-8 h-8" />
       </div>
-      <h1 className="text-4xl font-black text-gray-900">404 — Page Not Found</h1>
+      <h1 className="text-4xl font-black text-gray-900">404 - Page Not Found</h1>
       <p className="text-sm text-gray-600 max-w-sm">The cinema page or showtime URL you requested could not be located.</p>
       <Link
         to="/"

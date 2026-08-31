@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Play, Ticket, X, ChevronRight, ArrowLeft,
-  ChevronDown, ChevronUp, ShieldAlert, ArrowRight, CheckCircle2,
+  ChevronDown, ChevronUp, ShieldAlert, ArrowRight,
 } from 'lucide-react';
-import { getMovieById } from '../features/movies/moviesData';
 import { useMovieDetail } from '../features/movies/useMovies';
-import { useLocationStore, useLiveLocations, LOCATION_CINEMAS_MAP } from '../features/location/useLocationStore';
+import { useLocationStore, useLiveLocations } from '../features/location/useLocationStore';
+import { useShowtimes } from '../features/showtimes/useShowtimes';
+import {
+  generateBookingDates,
+  groupShowtimesByCinema,
+  isPastSlot,
+} from '../features/showtimes/showtimeHelpers';
 import { useSeats, useHoldSeats } from '../features/seat-selection/useSeats';
 import { useSeatStore } from '../features/seat-selection/useSeatStore';
 import { useAuthStore } from '../features/auth/useAuthStore';
@@ -35,41 +40,12 @@ function normalise(raw: any): any {
   };
 }
 
-const generateDates = () => {
-  const today = new Date();
-  const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const months= ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return Array.from({length: 7}, (_, i) => {
-    const d = new Date(today); d.setDate(today.getDate() + i);
-    return {
-      label:     i === 0 ? `Today, ${d.getDate()} ${months[d.getMonth()]}` : `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`,
-      shortLabel: months[d.getMonth()],
-      dateNum:   String(d.getDate()).padStart(2,'0'),
-      day:       i === 0 ? 'Today' : days[d.getDay()],
-      val:       `${i === 0 ? 'Today' : days[d.getDay()]}, ${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`,
-    };
-  });
-};
-
-const SLOTS_CACHE: Record<string, {time:string; fmt:string; showtimeId:string}[]> = {};
-function getSlotsForCinema(cinemaId: string, movieId: string, dateVal: string, hallTypes: string[]) {
-  const k = `${cinemaId}_${movieId}_${dateVal}`;
-  if (!SLOTS_CACHE[k]) SLOTS_CACHE[k] = [
-    { time:'10:30 AM', fmt: hallTypes[0]||'Standard', showtimeId:`st_${cinemaId}_${movieId}_1030` },
-    { time:'01:45 PM', fmt: hallTypes[0]||'Standard', showtimeId:`st_${cinemaId}_${movieId}_1345` },
-    { time:'04:15 PM', fmt: hallTypes[1]||hallTypes[0]||'Standard', showtimeId:`st_${cinemaId}_${movieId}_1615` },
-    { time:'07:30 PM', fmt: hallTypes[0]||'Standard', showtimeId:`st_${cinemaId}_${movieId}_1930` },
-    { time:'10:00 PM', fmt: hallTypes[1]||hallTypes[0]||'Standard', showtimeId:`st_${cinemaId}_${movieId}_2200` },
-  ];
-  return SLOTS_CACHE[k];
-}
-
 // ─── Trailer Modal ────────────────────────────────────────────────────────────
 const TrailerModal: React.FC<{url:string;title:string;onClose:()=>void}> = ({url,title,onClose}) => (
   <div className="fixed inset-0 z-50 bg-gray-900/95 flex items-center justify-center p-4" onClick={onClose}>
     <div className="relative w-full max-w-5xl bg-white rounded-xl p-4" onClick={e=>e.stopPropagation()}>
       <div className="flex items-center justify-between mb-3 px-1">
-        <span className="text-sm font-bold text-gray-900">{title} — Trailer</span>
+        <span className="text-sm font-bold text-gray-900">{title} - Trailer</span>
         <button onClick={onClose} className="text-gray-600 hover:text-gray-900"><X className="w-5 h-5"/></button>
       </div>
       <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden">
@@ -108,7 +84,7 @@ const SeatMap: React.FC<{showtimeId:string}> = ({showtimeId}) => {
     const rs=seats.filter(s=>s.row===row);
     const type=rs[0]?.type??'STANDARD';
     const price=rs[0]?.price??0;
-    const label=type==='RECLINER'?`VIP RECLINER — NPR ${price}`:type==='PREMIUM'?`PREMIUM — NPR ${price}`:`STANDARD — NPR ${price}`;
+    const label=type==='RECLINER'?`VIP RECLINER - NPR ${price}`:type==='PREMIUM'?`PREMIUM - NPR ${price}`:`STANDARD - NPR ${price}`;
     if(!tierMap[label]) tierMap[label]={seats:[],label};
     tierMap[label].seats.push(...rs);
   });
@@ -135,7 +111,7 @@ const SeatMap: React.FC<{showtimeId:string}> = ({showtimeId}) => {
                       return(
                         <button key={seat.id} disabled={unavail}
                           onClick={()=>!unavail&&toggleSeat({id:seat.id,row:seat.row,number:seat.number,type:seat.type as any,price:seat.price})}
-                          title={`${seat.row}${seat.number} — NPR ${seat.price}`}
+                          title={`${seat.row}${seat.number} - NPR ${seat.price}`}
                           className={`w-6 h-6 rounded text-[9px] font-bold transition-all border flex items-center justify-center ${
                             unavail?'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed':
                             sel?'bg-amber-400 border-amber-300 text-black font-extrabold scale-110':
@@ -160,7 +136,7 @@ const SeatMap: React.FC<{showtimeId:string}> = ({showtimeId}) => {
   );
 };
 
-// ─── Coming Soon — QFX info layout ───────────────────────────────────────────
+// ─── Coming Soon - QFX info layout ───────────────────────────────────────────
 const ComingSoonDetail: React.FC<{movie:any}> = ({movie}) => {
   const navigate = useNavigate();
   const [showTrailer,setShowTrailer] = useState(false);
@@ -214,20 +190,19 @@ const ComingSoonDetail: React.FC<{movie:any}> = ({movie}) => {
   );
 };
 
-// ─── Now Showing — 100% QFX-accurate layout ──────────────────────────────────
+// ─── Now Showing - 100% QFX-accurate layout ──────────────────────────────────
 const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
   const navigate  = useNavigate();
   const {selectedLocation} = useLocationStore();
   const { liveMap } = useLiveLocations();
-  const cinemas = liveMap[selectedLocation] || liveMap[Object.keys(liveMap)[0]] || [];
   const user = useAuthStore(s=>s.user);
   const {selectedSeats,clearSelection,setExpiresAt,setShowtimeId} = useSeatStore();
   const holdMutation = useHoldSeats();
 
-  const dates = generateDates();
+  const dates = generateBookingDates();
   const [showTrailer,setShowTrailer]   = useState(false);
   const [moreInfo,setMoreInfo]         = useState(false);
-  const [selDate,setSelDate]           = useState(dates[0].val);
+  const [selDateIso,setSelDateIso]     = useState(dates[0].iso);
   const [cinFilter,setCinFilter]       = useState('All');
   const [langFilter,setLangFilter]     = useState('All');
   const [step1Open,setStep1Open]       = useState(true);
@@ -235,6 +210,24 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
   const [holdError,setHoldError]       = useState('');
   const [selSlot,setSelSlot]           = useState<{cinema:string;cinemaId:string;time:string;fmt:string;lang:string;showtimeId:string}|null>(null);
   const cast = (movie.cast??[]).filter((c:any)=>c?.name);
+
+  const { data: showtimes, isLoading: showtimesLoading } = useShowtimes({ movieId: movie.id, date: selDateIso });
+
+  const cinemaGroups = useMemo(
+    () => groupShowtimesByCinema(showtimes, selectedLocation),
+    [showtimes, selectedLocation],
+  );
+
+  const filteredGroups = useMemo(
+    () => cinemaGroups.filter(g => cinFilter==='All' || g.cinemaName===cinFilter),
+    [cinemaGroups, cinFilter],
+  );
+
+  const cinemaFilterOptions = useMemo(() => {
+    const fromGroups = cinemaGroups.map(g => g.cinemaName);
+    const fromLoc = (liveMap[selectedLocation] ?? []).map(c => c.name);
+    return Array.from(new Set([...fromGroups, ...fromLoc]));
+  }, [cinemaGroups, liveMap, selectedLocation]);
 
   const handleSlot = (cinema:string,cinemaId:string,time:string,fmt:string,lang:string,showtimeId:string) => {
     if (selSlot?.showtimeId!==showtimeId) { clearSelection(); setShowtimeId(showtimeId); }
@@ -271,7 +264,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
         {/* ══ LEFT SIDEBAR ══════════════════════════════════════════════════ */}
         <div className="lg:w-[200px] shrink-0">
 
-          {/* Poster card — exactly like QFX */}
+          {/* Poster card - exactly like QFX */}
           <div className="relative group">
             {/* Cyan "NOW SHOWING" / badge bar */}
             <div className="qfx-card-top-bar text-center text-gray-900 text-[11px] font-extrabold uppercase py-1.5">
@@ -289,7 +282,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
             )}
           </div>
 
-          {/* Below poster info — exactly QFX style */}
+          {/* Below poster info - exactly QFX style */}
           <div className="pt-3 space-y-2">
             <p className="text-[11px] font-black text-[#00a8cc] uppercase tracking-widest">Now Showing</p>
             <h2 className="text-[15px] font-bold text-gray-900 leading-snug">
@@ -313,7 +306,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
               {moreInfo ? 'See Less ▲' : 'More Info ▼'}
             </button>
 
-            {/* Expanded info — slides in below */}
+            {/* Expanded info - slides in below */}
             {moreInfo&&(
               <div className="pt-3 border-t border-[#2a3040] space-y-2.5">
                 <p className="text-[12px] text-[#8a9ab5] leading-relaxed">{movie.synopsis}</p>
@@ -377,9 +370,9 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
                   <p className="text-[12px] font-bold text-gray-500 mb-2.5 uppercase tracking-wider">Select Date</p>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                     {dates.map(d=>(
-                      <button key={d.val} onClick={()=>{setSelDate(d.val);setSelSlot(null);clearSelection();}}
+                      <button key={d.iso} onClick={()=>{setSelDateIso(d.iso);setSelSlot(null);clearSelection();}}
                         className={`flex flex-col items-center px-3 py-2 rounded-lg border min-w-[52px] transition-all ${
-                          selDate===d.val?'bg-[#00a8cc] border-[#00a8cc] text-gray-900':'bg-white border-gray-300 text-gray-600 hover:border-[#00a8cc]/50'
+                          selDateIso===d.iso?'bg-[#00a8cc] border-[#00a8cc] text-gray-900':'bg-white border-gray-300 text-gray-600 hover:border-[#00a8cc]/50'
                         }`}>
                         <span className="text-[10px] uppercase font-semibold">{d.shortLabel}</span>
                         <span className="text-[18px] font-black leading-tight">{d.dateNum}</span>
@@ -393,7 +386,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
                 <div>
                   <p className="text-[12px] font-bold text-gray-500 mb-2.5 uppercase tracking-wider">Select Cinemas <span className="text-gray-700">({selectedLocation})</span></p>
                   <div className="flex flex-wrap gap-2">
-                    {['All',...cinemas.map(c=>c.name)].map(name=>(
+                    {['All',...cinemaFilterOptions].map(name=>(
                       <button key={name} onClick={()=>setCinFilter(name)}
                         className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-all ${
                           cinFilter===name?'bg-[#00a8cc] text-gray-900':'bg-white border border-gray-300 text-gray-600 hover:border-[#00a8cc]/50'
@@ -417,25 +410,36 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
 
                 {/* Time slots per cinema */}
                 <div className="space-y-4 pt-1 border-t border-gray-200">
-                  {cinemas.filter(cin=>cinFilter==='All'||cinFilter===cin.name).map(cin=>{
-                    const slots = getSlotsForCinema(cin.id,movie.id,selDate,cin.hallTypes);
+                  {showtimesLoading ? (
+                    <div className="space-y-3">
+                      {[1,2,3,4,5].map(n=>(
+                        <div key={n} className="h-12 shimmer rounded"/>
+                      ))}
+                    </div>
+                  ) : filteredGroups.length===0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-[12px] text-gray-500">No showtimes scheduled for this date.</p>
+                    </div>
+                  ) : filteredGroups.map(group=>{
                     return(
-                      <div key={cin.id}>
+                      <div key={group.cinemaId}>
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[13px] font-extrabold text-gray-900 uppercase">{cin.name}</span>
+                          <span className="text-[13px] font-extrabold text-gray-900 uppercase">{group.cinemaName}</span>
                           <span className="text-[11px] text-amber-600 font-semibold">({movie.language||'ENG'})</span>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {slots.map(slot=>{
+                          {group.slots.map(slot=>{
                             const isSel = selSlot?.showtimeId===slot.showtimeId;
+                            const isPast = isPastSlot(slot.startsAt);
                             return(
-                              <button key={slot.showtimeId}
-                                onClick={()=>handleSlot(cin.name,cin.id,slot.time,slot.fmt,movie.language||'ENG',slot.showtimeId)}
+                              <button key={slot.showtimeId} disabled={isPast}
+                                onClick={()=>!isPast&&handleSlot(group.cinemaName,group.cinemaId,slot.time,slot.fmt,movie.language||'ENG',slot.showtimeId)}
                                 className={`px-3.5 py-2 rounded text-left border transition-all ${
+                                  isPast?'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed':
                                   isSel?'bg-[#00a8cc] border-[#00a8cc] text-gray-900 font-bold':'bg-white border-gray-300 text-gray-700 hover:border-[#00a8cc]/60'
                                 }`}>
                                 <span className="block text-[13px] font-bold">{slot.time}</span>
-                                <span className="block text-[10px] text-gray-500 mt-0.5">{slot.fmt}</span>
+                                <span className="block text-[10px] text-gray-500 mt-0.5">{isPast?'Show ended':slot.fmt}</span>
                               </button>
                             );
                           })}
@@ -445,7 +449,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
                   })}
                 </div>
 
-                {/* Please Note — QFX amber box */}
+                {/* Please Note - QFX amber box */}
                 <div className="rounded border border-amber-600/30 bg-amber-50 p-4 space-y-1.5">
                   <p className="text-[13px] font-bold text-amber-700">Please Note</p>
                   <p className="text-[12px] text-amber-800/90 leading-relaxed">Tickets are required for all admissions. No entry for children under 2.5 feet.</p>
@@ -462,7 +466,7 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
               <div className="flex items-center gap-2.5">
                 <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center shrink-0 ${selSlot?'bg-[#00a8cc]':'bg-gray-300'} text-gray-900`}>2</span>
                 <span className="text-[14px] font-bold text-gray-900">Pick Your Seats</span>
-                {!selSlot&&<span className="text-[12px] text-gray-500 ml-1">— select a showtime first</span>}
+                {!selSlot&&<span className="text-[12px] text-gray-500 ml-1">- select a showtime first</span>}
               </div>
               {selSlot&&(step2Open?<ChevronUp className="w-4 h-4 text-gray-500"/>:<ChevronDown className="w-4 h-4 text-gray-500"/>)}
             </div>
@@ -534,9 +538,8 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
 // ─── Entry point ──────────────────────────────────────────────────────────────
 export const MovieDetailsPage: React.FC = () => {
   const {id} = useParams<{id:string}>();
-  const {data:apiMovie,isLoading} = useMovieDetail(id??'');
-  const staticFallback = !isLoading&&!apiMovie ? getMovieById(id??'') : null;
-  const movie = normalise(apiMovie??staticFallback);
+  const { data: apiMovie, isLoading } = useMovieDetail(id ?? '');
+  const movie = normalise(apiMovie);
 
   if (isLoading||!movie) return (
     <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto px-4 py-10">

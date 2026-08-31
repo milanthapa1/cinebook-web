@@ -210,7 +210,7 @@ export const AdminHallsPage: React.FC = () => {
               </Field>
 
               {!editId && (
-                <Field label="Rows (comma-separated)" hint="e.g. A,B,C,D,E,F — rows are auto-populated with seats">
+                <Field label="Rows (comma-separated)" hint="e.g. A,B,C,D,E,F - rows are auto-populated with seats">
                   <input className={inputCls} value={form.rows} onChange={e => set('rows', e.target.value)} placeholder="A,B,C,D,E,F" />
                 </Field>
               )}

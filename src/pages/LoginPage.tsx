@@ -5,7 +5,7 @@ import { useAuthStore } from '../features/auth/useAuthStore';
 import { apiClient } from '../lib/apiClient';
 import { signInWithGoogle } from '../lib/googleAuth';
 
-/** Google "G" logo SVG — used on the OAuth button */
+/** Google "G" logo SVG - used on the OAuth button */
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4"/>
@@ -21,7 +21,6 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,24 +51,10 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setError('');
-    setGoogleLoading(true);
-    try {
-      const idToken = await signInWithGoogle();
-      const res = await apiClient.post('/auth/google', { idToken });
-      const { user, accessToken } = res.data.data;
-      setAuth(user, accessToken);
-      navigate(from, { replace: true });
-    } catch (err: any) {
-      const message =
-        err.response?.data?.message ||
-        err.message ||
-        'Google sign-in failed. Please try again.';
-      setError(message);
-    } finally {
-      setGoogleLoading(false);
-    }
+  const handleGoogleLogin = () => {
+    // Redirect to the backend, which performs the full server-side Google
+    // OAuth exchange and redirects back to /google/callback.
+    signInWithGoogle();
   };
 
   const handleDemoLogin = () => {
@@ -105,23 +90,11 @@ export const LoginPage: React.FC = () => {
           type="button"
           id="google-signin-btn"
           onClick={handleGoogleLogin}
-          disabled={googleLoading || loading}
+          disabled={loading}
           className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-semibold text-sm border border-gray-200 shadow-sm transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {googleLoading ? (
-            <>
-              <svg className="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span>Connecting to Google...</span>
-            </>
-          ) : (
-            <>
-              <GoogleIcon />
-              <span>Continue with Google</span>
-            </>
-          )}
+          <GoogleIcon />
+          <span>Continue with Google</span>
         </button>
 
         {/* Divider */}
@@ -179,7 +152,7 @@ export const LoginPage: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || googleLoading}
+            disabled={loading}
             className="w-full py-3 rounded-xl bg-[#00a8cc] hover:bg-[#0096c7] text-white font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
           >
             {loading ? 'Signing in...' : 'Sign In'} <ArrowRight className="w-4 h-4" />
@@ -202,6 +175,14 @@ export const LoginPage: React.FC = () => {
           Don't have an account?{' '}
           <Link to="/register" className="text-[#00a8cc] font-bold hover:underline">
             Create an account
+          </Link>
+        </p>
+
+        {/* Admin Sign In Link */}
+        <p className="text-center text-[11px] text-gray-400">
+          Cinema staff?{' '}
+          <Link to="/admin/login" className="text-gray-600 font-semibold hover:text-[#00a8cc] hover:underline">
+            Admin sign in
           </Link>
         </p>
       </div>

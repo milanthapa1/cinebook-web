@@ -1,21 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import './styles/index.css';
+import { queryClient } from './lib/queryClient';
 import { useAuthStore } from './features/auth/useAuthStore';
 import { API_BASE_URL } from './lib/config';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 5 * 60 * 1000,
-    },
-  },
-});
 
 // On every app load: if we have a persisted user but no accessToken,
 // silently hit /auth/refresh (uses the httpOnly cookie) to get a new token.
@@ -27,15 +18,24 @@ if (user && !accessToken) {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
   })
-    .then(r => r.json())
-    .then(data => {
+    .then(async (r) => {
+      const data = await r.json();
+
+      // Only destroy the session when the API explicitly rejects the refresh
+      // token (expired/revoked). A failed/transient request must not log the
+      // user out on a plain page refresh.
+      if (r.status === 401 && data?.success === false) {
+        logout();
+        return;
+      }
+
       if (data?.success && data?.data?.accessToken) {
         setAccessToken(data.data.accessToken);
-      } else {
-        logout(); // refresh token also expired — force re-login
       }
     })
-    .catch(() => logout());
+    .catch(() => {
+      // Network error - leave the persisted session intact.
+    });
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

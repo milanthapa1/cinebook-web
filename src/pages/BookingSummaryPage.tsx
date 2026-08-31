@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Ticket, Plus, Minus, ShieldCheck, ArrowRight, Film, ChevronLeft, Clock, MapPin } from 'lucide-react';
+import { Ticket, ShieldCheck, ArrowRight, Film, ChevronLeft, Clock, MapPin } from 'lucide-react';
 import { useSeatStore } from '../features/seat-selection/useSeatStore';
 import { useCreateBooking } from '../features/booking/useBookings';
 
@@ -12,19 +12,23 @@ export const BookingSummaryPage: React.FC = () => {
   const showTime  = searchParams.get('time') || '';
   const navigate = useNavigate();
 
-  const { selectedSeats } = useSeatStore();
+  const { selectedSeats, showtimeId: heldShowtimeId } = useSeatStore();
   const createBookingMutation = useCreateBooking();
+
+  // Only trust seats that belong to the showtime being checked out (persisted
+  // session store survives refresh, but must not leak from a previous flow).
+  const seats = heldShowtimeId === showtimeId ? selectedSeats : [];
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const seatsTotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+  const seatsTotal = seats.reduce((sum, s) => sum + s.price, 0);
   const subtotal = seatsTotal;
   const vatAmount = Math.round(subtotal * 0.13);
   const grandTotal = subtotal + vatAmount;
 
   const handleCreateBooking = async () => {
-    if (selectedSeats.length === 0) {
+    if (seats.length === 0) {
       setErrorMsg('Please select at least one seat before proceeding.');
       return;
     }
@@ -33,7 +37,7 @@ export const BookingSummaryPage: React.FC = () => {
     try {
       const booking = await createBookingMutation.mutateAsync({
         showtimeId,
-        seatIds: selectedSeats.map((s) => s.id),
+        seatIds: seats.map((s) => s.id),
       });
       navigate(`/payment?bookingId=${booking.id}`);
     } catch (err: any) {
@@ -86,11 +90,11 @@ export const BookingSummaryPage: React.FC = () => {
           {/* Selected Seats */}
           <div>
             <h4 className="text-[11px] font-extrabold text-gray-600 uppercase tracking-widest mb-3">Selected Seats</h4>
-            {selectedSeats.length === 0 ? (
-              <p className="text-xs text-gray-500 italic">No seats selected.</p>
+            {seats.length === 0 ? (
+              <p className="text-xs text-gray-500 italic">No seats selected for this showtime.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {selectedSeats.map((seat) => (
+                {seats.map((seat) => (
                   <div key={seat.id} className="p-3.5 bg-gray-100 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
                     <span className="font-bold text-gray-900 flex items-center gap-2">
                       <Ticket className="w-3.5 h-3.5 text-[#00a8cc]" />
@@ -114,7 +118,7 @@ export const BookingSummaryPage: React.FC = () => {
 
           <div className="space-y-3 text-sm">
             <div className="flex justify-between text-gray-600">
-              <span>Ticket Base ({selectedSeats.length} seat{selectedSeats.length !== 1 ? 's' : ''})</span>
+              <span>Ticket Base ({seats.length} seat{seats.length !== 1 ? 's' : ''})</span>
               <span className="text-gray-900 font-semibold">NPR {seatsTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-gray-600">
@@ -129,7 +133,7 @@ export const BookingSummaryPage: React.FC = () => {
 
           <button
             onClick={handleCreateBooking}
-            disabled={loading || selectedSeats.length === 0}
+            disabled={loading || seats.length === 0}
             className="w-full py-4 rounded-xl bg-[#00a8cc] hover:bg-[#0096c7] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
           >
             {loading ? 'Processing...' : 'Proceed to Payment'}
