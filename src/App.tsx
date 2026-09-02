@@ -36,7 +36,7 @@ import { AdminLocationsPage } from './pages/admin/AdminLocationsPage';
 
 // Public layout - wraps all non-admin pages with Navbar + Footer
 const PublicLayout: React.FC = () => (
-  <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col selection:bg-[#00a8cc] selection:text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
+  <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col selection:bg-[#00a8cc] selection:text-white">
     <Navbar />
     <CitySelectModal />
     <main>

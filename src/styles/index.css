@@ -16,6 +16,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    font-family: 'Poppins', sans-serif;
   }
   body {
     @apply bg-gray-50 text-gray-900 selection:bg-[#00a8cc] selection:text-white;
