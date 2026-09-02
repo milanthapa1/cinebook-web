@@ -195,9 +195,12 @@ export const useVerifyPayment = () => {
     mutationFn: async (payload: {
       bookingId: string;
       provider: 'esewa';
+      // v2: Base64-encoded JSON from eSewa ?data= param
+      data?: string;
+      // legacy fallback fields
+      refId?: string;
       token?: string;
       pidx?: string;
-      refId?: string;
       transaction_code?: string;
       transaction_uuid?: string;
       status?: string;
@@ -207,18 +210,15 @@ export const useVerifyPayment = () => {
       amount?: number;
     }) => {
       const res = await apiClient.post('/payments/verify', payload);
-      const data = res.data.data;
-      // Only the server decides a booking is confirmed. If it responded with
-      // an explicit success, mirror just that status into the offline cache so
-      // the ticket page shows truth even if the next refetch fails.
-      if (data?.bookingId && data?.status === 'CONFIRMED') {
+      const resData = res.data.data;
+      if (resData?.bookingId && resData?.status === 'CONFIRMED') {
         const cached = getBookingFromLocalStorage(payload.bookingId);
         if (cached) {
           cached.status = 'CONFIRMED';
           saveBookingToLocalStorage(cached);
         }
       }
-      return data;
+      return resData;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['booking', variables.bookingId] });
