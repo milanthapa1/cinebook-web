@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Search, User, LogOut, ChevronDown, TicketCheck, Shield, Ticket, Check } from 'lucide-react';
+import { MapPin, Search, User, LogOut, ChevronDown, TicketCheck, Shield, Ticket, Check, Sun, Moon } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/useAuthStore';
+import { useThemeStore } from '../../lib/themeStore';
 import { useLocationStore, useLiveLocations } from '../../features/location/useLocationStore';
 import { useMovies } from '../../features/movies/useMovies';
 import { useShowtimes } from '../../features/showtimes/useShowtimes';
@@ -277,6 +278,7 @@ export const Navbar: React.FC = () => {
   const cinemasForLocation = liveMap[selectedLocation] || liveMap[Object.keys(liveMap)[0]] || [];
   const { data: moviesData } = useMovies({ isShowing: true });
   const dates = generateBookingDates();
+  const { theme, toggleTheme } = useThemeStore();
 
   const [qCinema, setQCinema] = useState('');
   const [qMovie, setQMovie] = useState('');
@@ -379,6 +381,14 @@ export const Navbar: React.FC = () => {
             title="Browse movies"
           >
             <Search className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800"
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
           {user ? (
