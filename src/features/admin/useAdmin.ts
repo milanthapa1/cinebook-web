@@ -60,11 +60,29 @@ export interface AdminUser {
   id: string;
   name: string;
   email: string;
-  phone?: string;
+  phone?: string | null;
   role: 'USER' | 'ADMIN';
-  avatarUrl?: string;
+  status: 'ACTIVE' | 'SUSPENDED' | 'BANNED';
+  avatarUrl?: string | null;
+  dob?: string | null;
+  gender?: string | null;
   createdAt: string;
+  updatedAt: string;
   _count?: { bookings: number };
+}
+
+export interface AdminUserBooking {
+  id: string;
+  status: string;
+  totalAmount: number;
+  createdAt: string;
+  showtime: {
+    startsAt: string;
+    movie: { id: string; title: string; posterUrl: string };
+    hall:  { id: string; name: string };
+  };
+  seats: { id: string; seatId: string; priceAtBooking: number }[];
+  payment?: { provider: string; status: string; amount: number } | null;
 }
 
 // ─── Stats types ─────────────────────────────────────────────────────────────
@@ -217,13 +235,47 @@ export const useUpdateBookingStatus = () => {
 };
 
 // ─── Users ────────────────────────────────────────────────────────────────────
-export const useAdminUsers = (page = 1, search?: string) =>
+export const useAdminUsers = (
+  page = 1,
+  search?: string,
+  role?: string,
+  status?: string,
+) =>
   useQuery({
-    queryKey: ['admin', 'users', page, search],
+    queryKey: ['admin', 'users', page, search, role, status],
     queryFn: async () => {
-      const res = await apiClient.get('/admin/users', { params: { page, limit: 15, search } });
+      const res = await apiClient.get('/admin/users', {
+        params: { page, limit: 15, search, role, status },
+      });
       return res.data as { users: AdminUser[]; total: number; totalPages: number; page: number };
     },
+  });
+
+export const useAdminUser = (id: string) =>
+  useQuery({
+    queryKey: ['admin', 'users', id],
+    queryFn: async () => {
+      const res = await apiClient.get(`/admin/users/${id}`);
+      return res.data.data as AdminUser;
+    },
+    enabled: !!id,
+  });
+
+export const useAdminUserBookings = (id: string, page = 1) =>
+  useQuery({
+    queryKey: ['admin', 'users', id, 'bookings', page],
+    queryFn: async () => {
+      const res = await apiClient.get(`/admin/users/${id}/bookings`, {
+        params: { page, limit: 10 },
+      });
+      return res.data as {
+        bookings: AdminUserBooking[];
+        total: number;
+        totalPages: number;
+        page: number;
+      };
+    },
+    enabled: !!id,
   });
 
 export const useUpdateUserRole = () => {
@@ -231,6 +283,45 @@ export const useUpdateUserRole = () => {
   return useMutation({
     mutationFn: ({ id, role }: { id: string; role: 'USER' | 'ADMIN' }) =>
       apiClient.patch(`/admin/users/${id}/role`, { role }).then((r) => r.data.data),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'users', id] });
+    },
+  });
+};
+
+export const useUpdateUserStatus = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'ACTIVE' | 'SUSPENDED' | 'BANNED' }) =>
+      apiClient.patch(`/admin/users/${id}/status`, { status }).then((r) => r.data.data),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'users', id] });
+    },
+  });
+};
+
+export const useUpdateUserProfile = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...data
+    }: { id: string; name?: string; phone?: string | null; dob?: string | null; gender?: string | null }) =>
+      apiClient.patch(`/admin/users/${id}/profile`, data).then((r) => r.data.data),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'users', id] });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiClient.delete(`/admin/users/${id}`).then((r) => r.data.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
   });
 };
