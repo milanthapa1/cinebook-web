@@ -47,8 +47,13 @@ export const PaymentPage: React.FC = () => {
   const verifyMut    = useVerifyPayment();
 
   // ── Step 3: auto-verify when eSewa redirects back with ?data= ──────────────
+  // Wait until the booking has loaded before verifying. This deliberately
+  // delays the /payments/verify call past the initial token-refresh window
+  // (the interceptor / main.tsx silent refresh may re-issue an expired access
+  // token after the user returns from the slow eSewa redirect). Firing verify
+  // before that would 401 and force-log the user out.
   useEffect(() => {
-    if (!bookingId || !esewaData || verifiedRef.current || verifyMut.isPending) return;
+    if (!bookingId || !esewaData || !booking || verifiedRef.current || verifyMut.isPending) return;
     verifiedRef.current = true;
 
     // Strip the callback params from the URL immediately so a refresh doesn't re-verify
@@ -70,7 +75,7 @@ export const PaymentPage: React.FC = () => {
         },
       },
     );
-  }, [bookingId, esewaData, verifyMut, navigate]);
+  }, [bookingId, esewaData, booking, verifyMut, navigate]);
 
   // ── Step 4: auto-submit the form once fields are ready ────────────────────
   useEffect(() => {
@@ -96,14 +101,30 @@ export const PaymentPage: React.FC = () => {
 
   const isProcessing = initiateMut.isPending || verifyMut.isPending || !!formData;
 
-  // ── Loading ────────────────────────────────────────────────────────────────
-  if (isLoading || (esewaData && !verifyMut.isError)) {
+  // ── Loading / verify states ─────────────────────────────────────────────────
+  // Showing "Verifying your payment..." while eSewa redirects back and the
+  // server confirms the booking. Only show "Loading booking..." when we are
+  // actually still fetching the booking and there's nothing to verify yet.
+  if (esewaData && verifyMut.isPending) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="w-10 h-10 animate-spin text-[#00a8cc] mx-auto" />
           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-            {esewaData ? 'Verifying your payment...' : 'Loading booking...'}
+            Verifying your payment...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-10 h-10 animate-spin text-[#00a8cc] mx-auto" />
+          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+            Loading booking...
           </p>
         </div>
       </div>
