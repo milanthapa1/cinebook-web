@@ -44,7 +44,9 @@ const ActionMenu: React.FC<{
   onDelete: () => void;
 }> = ({ user, onView, onDelete }) => {
   const [open, setOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
   const statusMut = useUpdateUserStatus();
   const roleMut   = useUpdateUserRole();
 
@@ -53,6 +55,15 @@ const ActionMenu: React.FC<{
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const handleToggle = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      // If less than 220px below the button to the bottom of the viewport, open upward
+      setOpenUpward(window.innerHeight - rect.bottom < 220);
+    }
+    setOpen(o => !o);
+  };
 
   const setStatus = (status: 'ACTIVE' | 'SUSPENDED' | 'BANNED') => {
     statusMut.mutate({ id: user.id, status });
@@ -65,12 +76,12 @@ const ActionMenu: React.FC<{
 
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(o => !o)}
+      <button ref={btnRef} onClick={handleToggle}
         className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
         <MoreVertical className="w-4 h-4" />
       </button>
       {open && (
-        <div className="absolute right-0 top-8 z-30 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg py-1 text-xs">
+        <div className={`absolute right-0 z-50 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-1 text-xs ${openUpward ? 'bottom-8' : 'top-8'}`}>
           <button onClick={() => { onView(); setOpen(false); }}
             className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
             <Eye className="w-3.5 h-3.5 text-[#00a8cc]" /> View Details
@@ -443,41 +454,69 @@ export const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Filter:</span>
-        {/* Role */}
-        {(['', 'USER', 'ADMIN'] as const).map(r => (
-          <button key={r || 'all-roles'} onClick={() => handleFilter('role', r)}
-            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-colors ${
-              roleFilter === r
-                ? 'bg-[#00a8cc] text-white border-[#00a8cc]'
-                : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-[#00a8cc] hover:text-[#00a8cc]'
-            }`}>
-            {r || 'All Roles'}
-          </button>
-        ))}
-        <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1" />
-        {/* Status */}
-        {(['', 'ACTIVE', 'SUSPENDED', 'BANNED'] as const).map(s => (
-          <button key={s || 'all-status'} onClick={() => handleFilter('status', s)}
-            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-colors ${
-              statusFilter === s
-                ? 'bg-[#00a8cc] text-white border-[#00a8cc]'
-                : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-[#00a8cc] hover:text-[#00a8cc]'
-            }`}>
-            {s || 'All Status'}
-          </button>
-        ))}
-        {(search || roleFilter || statusFilter) && (
-          <button onClick={() => { setSearch(''); setInput(''); setRole(''); setStatus(''); setPage(1); }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-rose-500 border border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950/30 transition-colors">
-            <X className="w-3 h-3" /> Clear
-          </button>
-        )}
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl px-4 py-3 shadow-sm">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+
+          {/* Role group */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">Role</span>
+            <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-0.5 gap-0.5">
+              {([
+                { value: '',      label: 'All'   },
+                { value: 'USER',  label: 'User'  },
+                { value: 'ADMIN', label: 'Admin' },
+              ] as const).map(({ value, label }) => (
+                <button
+                  key={value || 'all-roles'}
+                  onClick={() => handleFilter('role', value)}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                    roleFilter === value
+                      ? 'bg-white dark:bg-gray-700 text-[#00a8cc] shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="hidden sm:block w-px h-5 bg-gray-200 dark:bg-gray-700" />
+
+          {/* Status group */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 shrink-0">Status</span>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {([
+                { value: '',          label: 'All',       active: 'bg-gray-700 text-white',                               inactive: 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700' },
+                { value: 'ACTIVE',    label: 'Active',    active: 'bg-emerald-500 text-white',                            inactive: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40' },
+                { value: 'SUSPENDED', label: 'Suspended', active: 'bg-amber-500 text-white',                              inactive: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40' },
+                { value: 'BANNED',    label: 'Banned',    active: 'bg-rose-500 text-white',                               inactive: 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40' },
+              ] as const).map(({ value, label, active, inactive }) => (
+                <button
+                  key={value || 'all-status'}
+                  onClick={() => handleFilter('status', value)}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${statusFilter === value ? active : inactive}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Clear — only when something is active */}
+          {(search || roleFilter || statusFilter) && (
+            <button
+              onClick={() => { setSearch(''); setInput(''); setRole(''); setStatus(''); setPage(1); }}
+              className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
+              <X className="w-3 h-3" /> Clear filters
+            </button>
+          )}
+
+        </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm dark:bg-gray-900 dark:border-gray-800">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-visible shadow-sm dark:bg-gray-900 dark:border-gray-800">
         {isLoading ? (
           <>
             <div className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/50 px-5 py-3.5 flex gap-4">
