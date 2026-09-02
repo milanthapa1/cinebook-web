@@ -1,14 +1,53 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 const inputCls = 'w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500';
 
-export const ContactPage: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false);
+const CONTACT_FORM_URL = import.meta.env.VITE_CONTACT_FORM_URL as string | undefined;
 
-  const handleSubmit = (e: React.FormEvent) => {
+type Status = 'idle' | 'submitting' | 'success' | 'error';
+
+export const ContactPage: React.FC = () => {
+  const [status, setStatus] = useState<Status>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+
+    if (!CONTACT_FORM_URL) {
+      setErrorMsg('Contact form is not configured. Please try again later.');
+      setStatus('error');
+      return;
+    }
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const name = (formData.get('name') as string).trim();
+    const email = (formData.get('email') as string).trim();
+    const message = (formData.get('message') as string).trim();
+
+    setStatus('submitting');
+
+    try {
+      const res = await fetch(CONTACT_FORM_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      // mode: 'no-cors' always returns opaque response, so treat any response as success
+      setStatus('success');
+      form.reset();
+    } catch {
+      setErrorMsg('Failed to send message. Please try again.');
+      setStatus('error');
+    }
   };
 
   return (
@@ -44,7 +83,7 @@ export const ContactPage: React.FC = () => {
 
         {/* Contact Form */}
         <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 dark:bg-gray-900 dark:border-gray-800">
-          {submitted ? (
+          {status === 'success' ? (
             <div className="text-center py-10 space-y-3">
               <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
               <h4 className="text-base font-semibold text-gray-900 dark:text-gray-100">Message Delivered</h4>
@@ -54,21 +93,35 @@ export const ContactPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Your Name</label>
-                <input type="text" required placeholder="your name" className={inputCls} />
+                <input type="text" name="name" required placeholder="your name" className={inputCls} />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Email Address</label>
-                <input type="email" required placeholder="user@example.com" className={inputCls} />
+                <input type="email" name="email" required placeholder="user@example.com" className={inputCls} />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Message</label>
-                <textarea rows={4} required placeholder="How can we assist your cinema booking experience?" className={inputCls} />
+                <textarea name="message" rows={4} required placeholder="How can we assist your cinema booking experience?" className={inputCls} />
               </div>
+
+              {status === 'error' && (
+                <div className="flex items-center gap-2 text-xs text-rose-600 dark:text-rose-400">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {errorMsg}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#00a8cc] hover:bg-[#0096c7] text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                disabled={status === 'submitting'}
+                className="w-full py-3 rounded-xl bg-[#00a8cc] hover:bg-[#0096c7] text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Send className="w-4 h-4" /> Send Message
+                {status === 'submitting' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+                {status === 'submitting' ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           )}
