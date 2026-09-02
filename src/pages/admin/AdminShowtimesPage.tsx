@@ -30,7 +30,11 @@ export const AdminShowtimesPage: React.FC = () => {
 
   const set = (k: keyof typeof form, v: any) => setForm(f => ({ ...f, [k]: v }));
   const openEdit = (s: AdminShowtime) => {
-    setForm({ movieId: s.movieId, hallId: s.hallId, startsAt: new Date(s.startsAt).toISOString().slice(0, 16), basePrice: s.basePrice, premiumPrice: s.premiumPrice });
+    // Convert UTC showtime to local datetime-local input format (YYYY-MM-DDTHH:mm)
+    const local = new Date(s.startsAt);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const localStr = `${local.getFullYear()}-${pad(local.getMonth() + 1)}-${pad(local.getDate())}T${pad(local.getHours())}:${pad(local.getMinutes())}`;
+    setForm({ movieId: s.movieId, hallId: s.hallId, startsAt: localStr, basePrice: s.basePrice, premiumPrice: s.premiumPrice });
     setEditId(s.id); setShowForm(true); setError('');
   };
 
@@ -38,8 +42,10 @@ export const AdminShowtimesPage: React.FC = () => {
     if (!form.movieId || !form.hallId || !form.startsAt) { setError('All fields required.'); return; }
     setError('');
     try {
-      if (editId) await update.mutateAsync({ id: editId, startsAt: form.startsAt, basePrice: form.basePrice, premiumPrice: form.premiumPrice });
-      else await create.mutateAsync(form);
+      // datetime-local gives "YYYY-MM-DDTHH:mm" — convert to full ISO string for the API
+      const startsAtISO = new Date(form.startsAt).toISOString();
+      if (editId) await update.mutateAsync({ id: editId, startsAt: startsAtISO, basePrice: form.basePrice, premiumPrice: form.premiumPrice });
+      else await create.mutateAsync({ ...form, startsAt: startsAtISO });
       setShowForm(false); setEditId(null);
     } catch (e: any) { setError(e.response?.data?.message || 'Save failed'); }
   };
