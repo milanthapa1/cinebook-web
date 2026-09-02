@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, Film, MonitorPlay, CalendarDays,
@@ -46,7 +46,6 @@ const SidebarContent: React.FC<{
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
@@ -61,8 +60,7 @@ const SidebarContent: React.FC<{
 
   return (
     <div className="flex flex-col h-full bg-white border-r border-gray-200 dark:bg-gray-900 dark:border-gray-800">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
+      <div className="px-4 sm:px-5 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-800">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[#00a8cc] flex items-center justify-center shrink-0">
             <Film className="w-3.5 h-3.5 text-white" />
@@ -72,8 +70,7 @@ const SidebarContent: React.FC<{
         <p className="text-[10px] text-gray-400 font-medium mt-1 ml-[38px]">Admin Panel</p>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 py-4 px-3 space-y-5 overflow-y-auto">
+      <nav className="flex-1 py-3 sm:py-4 px-2.5 sm:px-3 space-y-4 sm:space-y-5 overflow-y-auto">
         {NAV_GROUPS.map(group => (
           <div key={group.label}>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 px-2 mb-1.5">{group.label}</p>
@@ -101,17 +98,13 @@ const SidebarContent: React.FC<{
         ))}
       </nav>
 
-      {/* User button - ChatGPT style popover */}
-      <div className="relative p-3 border-t border-gray-100 dark:border-gray-800" ref={popoverRef}>
-        {/* Popover menu - opens upward */}
+      <div className="relative p-2.5 sm:p-3 border-t border-gray-100 dark:border-gray-800" ref={popoverRef}>
         {popoverOpen && (
-          <div className="absolute bottom-[72px] left-3 right-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 dark:bg-gray-900 dark:border-gray-800">
-            {/* User info header */}
+          <div className="absolute bottom-[68px] sm:bottom-[72px] left-2.5 right-2.5 sm:left-3 sm:right-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 dark:bg-gray-900 dark:border-gray-800">
             <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
               <p className="text-xs font-semibold text-gray-900 truncate dark:text-gray-100">{user.name}</p>
               <p className="text-[11px] text-gray-400 truncate">{user.email}</p>
             </div>
-            {/* Actions */}
             <div className="p-1">
               <Link
                 to="/"
@@ -132,7 +125,6 @@ const SidebarContent: React.FC<{
           </div>
         )}
 
-        {/* Trigger button */}
         <button
           onClick={() => setPopoverOpen(p => !p)}
           className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-colors ${
@@ -162,6 +154,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const loc = useLocation();
   const [open, setOpen] = useState(false);
 
+  const closeSidebar = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [loc.pathname]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   if (!user) return <Navigate to="/admin/login" replace />;
   if (user.role !== 'ADMIN') return <Navigate to="/" replace />;
 
@@ -180,9 +187,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Mobile overlay */}
       {open && (
         <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-56">
-            <SidebarContent user={user} loc={loc} onNav={() => setOpen(false)} onLogout={logout} />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={closeSidebar} />
+          <aside className="absolute left-0 top-0 bottom-0 w-64 sm:w-56 transform transition-transform duration-200 ease-out">
+            <SidebarContent user={user} loc={loc} onNav={closeSidebar} onLogout={logout} />
           </aside>
         </div>
       )}
@@ -190,34 +197,34 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Main */}
       <div className="flex-1 md:ml-56 flex flex-col min-h-screen">
 
-        {/* Sticky topbar */}
-        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 px-5 md:px-7 py-3.5 flex items-center justify-between gap-4 dark:bg-gray-900 dark:border-gray-800">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 sm:px-5 md:px-7 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-4 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <button
               onClick={() => setOpen(true)}
-              className="md:hidden p-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="md:hidden p-2 -ml-1 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              aria-label="Open menu"
             >
               <Menu className="w-4 h-4" />
             </button>
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-sm min-w-0">
               <span className="text-gray-400 font-medium hidden sm:block">Admin</span>
               {activeItem && (
                 <>
-                  <ChevronRight className="w-3.5 h-3.5 text-gray-300 hidden sm:block" />
-                  <span className="font-semibold text-gray-900 flex items-center gap-1.5 dark:text-gray-100">
-                    <activeItem.Icon className="w-3.5 h-3.5 text-[#00a8cc]" />
-                    {activeItem.label}
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-300 hidden sm:block shrink-0" />
+                  <span className="font-semibold text-gray-900 flex items-center gap-1.5 dark:text-gray-100 truncate">
+                    <activeItem.Icon className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" />
+                    <span className="truncate">{activeItem.label}</span>
                   </span>
                 </>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
           </div>
         </header>
 
-        <main className="flex-1 p-5 md:p-7">{children}</main>
+        <main className="flex-1 p-4 sm:p-5 md:p-7">{children}</main>
       </div>
     </div>
   );

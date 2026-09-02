@@ -14,14 +14,14 @@ const Stat: React.FC<{
 }> = ({ label, value, sub, icon, iconBg, to }) => (
   <Link
     to={to}
-    className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 hover:border-[#00a8cc]/50 hover:shadow-md transition-all duration-200 group dark:bg-gray-900 dark:border-gray-800"
+    className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 hover:border-[#00a8cc]/50 hover:shadow-md transition-all duration-200 group dark:bg-gray-900 dark:border-gray-800"
   >
-    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
+    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
       {icon}
     </div>
-    <div>
+    <div className="min-w-0">
       <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">{label}</p>
-      <p className="text-3xl font-extrabold text-gray-900 mt-1 leading-none dark:text-gray-100">{value}</p>
+      <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1 leading-none truncate dark:text-gray-100">{value}</p>
       {sub && <p className="text-[11px] text-gray-500 mt-1.5 dark:text-gray-400">{sub}</p>}
     </div>
   </Link>
@@ -58,16 +58,16 @@ export const AdminDashboardPage: React.FC = () => {
   if (isLoading) return (
     <div className="space-y-6 max-w-6xl">
       {/* Header skeleton */}
-      <div className="flex items-center justify-between">
-        <div className="space-y-1.5">
-          <div className="skeleton h-6 w-32 rounded" />
-          <div className="skeleton h-3 w-40 rounded" />
-        </div>
-        <div className="skeleton h-3 w-40 rounded hidden sm:block" />
+    <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="space-y-1.5">
+        <div className="skeleton h-6 w-32 rounded" />
+        <div className="skeleton h-3 w-40 rounded" />
       </div>
+      <div className="skeleton h-3 w-40 rounded hidden sm:block" />
+    </div>
 
       {/* Stat cards skeleton */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[1,2,3,4].map(n => (
           <div key={n} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 dark:bg-gray-900 dark:border-gray-800">
             <div className="skeleton w-10 h-10 rounded-xl" />
@@ -159,7 +159,7 @@ export const AdminDashboardPage: React.FC = () => {
     <div className="space-y-6 max-w-6xl">
 
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
           <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">Cinema operations overview</p>
@@ -170,7 +170,7 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Stat
           label="Movies"
           value={stats?.totalMovies ?? 0}
@@ -265,7 +265,7 @@ export const AdminDashboardPage: React.FC = () => {
         {stats?.recentBookings?.length ? (
           <div className="divide-y divide-gray-50 dark:divide-gray-800">
             {stats.recentBookings.map(b => (
-              <div key={b.id} className="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50">
+              <div key={b.id} className="px-4 sm:px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 dark:bg-gray-800">
                     <Ticket className="w-4 h-4 text-gray-500" />
@@ -277,7 +277,7 @@ export const AdminDashboardPage: React.FC = () => {
                 </div>
                 <div className="text-right shrink-0 space-y-1">
                   <p className="text-xs font-bold text-gray-900 dark:text-gray-100">NPR {Number(b.totalAmount).toFixed(0)}</p>
-                  <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
+                  <span className={`inline-block text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
                     b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300'
                     : b.status === 'CANCELLED' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300'
                     : 'bg-amber-50 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300'

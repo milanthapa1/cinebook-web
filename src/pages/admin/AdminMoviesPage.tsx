@@ -54,8 +54,8 @@ const MovieCard: React.FC<{
         <span className="px-1.5 py-0.5 bg-black/60 border border-white/20 rounded text-[10px] font-bold text-white">{movie.rating}</span>
       </div>
 
-      {/* Hover actions */}
-      <div className="absolute bottom-2 inset-x-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {/* Hover actions - always visible on touch devices, hover only on desktop */}
+      <div className="absolute bottom-2 inset-x-2 flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
         <button onClick={() => onEdit(movie)} className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-[#00a8cc] hover:bg-[#0096c7] text-white text-[11px] font-bold rounded-lg transition-colors">
           <Pencil className="w-3 h-3" /> Edit
         </button>
@@ -250,7 +250,7 @@ export const AdminMoviesPage: React.FC = () => {
             <span className="font-semibold text-gray-700 dark:text-gray-300">{movies?.length ?? 0}</span> total · <span className="text-emerald-600 font-semibold">{nowShowing} showing</span> · <span className="text-amber-600 font-semibold">{upcoming} upcoming</span>
           </p>
         </div>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 shrink-0">
+        <button onClick={openCreate} className="flex items-center justify-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 shrink-0 w-full sm:w-auto">
           <Plus className="w-3.5 h-3.5" /> Add Movie
         </button>
       </div>

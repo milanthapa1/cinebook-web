@@ -201,7 +201,7 @@ export const AdminSeatsPage: React.FC = () => {
             }`}
           >
             <MonitorPlay className={`w-3.5 h-3.5 shrink-0 ${hallId === h.id ? 'text-white' : 'text-gray-400'}`} />
-            {h.name}
+            <span className="truncate">{h.name}</span>
             <span className={`text-[10px] font-semibold ${hallId === h.id ? 'text-white/80' : 'text-gray-400'}`}>
               {h._count?.seats ?? 0} seats
             </span>
@@ -257,7 +257,7 @@ export const AdminSeatsPage: React.FC = () => {
 
           {/* Hall info strip */}
           {hall && (
-            <div className="flex flex-wrap gap-4 text-xs text-gray-600 bg-white border border-gray-200 rounded-xl px-4 py-3 items-center dark:bg-gray-900 dark:border-gray-800 dark:text-gray-400">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600 bg-white border border-gray-200 rounded-xl px-4 py-3 items-center dark:bg-gray-900 dark:border-gray-800 dark:text-gray-400">
               <Info className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" />
               <span className="font-bold text-gray-900 dark:text-gray-100">{hall.name}</span>
               <span className="text-gray-400">·</span>
@@ -266,7 +266,7 @@ export const AdminSeatsPage: React.FC = () => {
               <span>{hall.soundSystem}</span>
               <span className="text-gray-400">·</span>
               <span>Capacity: <span className="text-gray-900 font-bold dark:text-gray-100">{hall.capacity}</span></span>
-              <span className="ml-auto flex gap-3">
+              <span className="flex flex-wrap gap-3 lg:ml-auto">
                 {(Object.keys(TYPES) as SeatType[]).map(t => (
                   <button key={t} onClick={() => selectByType(t)}
                     className="flex items-center gap-1 hover:text-gray-900 transition-colors dark:hover:text-gray-100">
@@ -467,7 +467,7 @@ export const AdminSeatsPage: React.FC = () => {
               <button
                 onClick={handleAddRow}
                 disabled={!newRow.trim() || addMut.isPending}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#00a8cc] hover:bg-[#0096c7] disabled:opacity-50 text-white font-extrabold text-xs rounded-xl transition-all active:scale-95"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#00a8cc] hover:bg-[#0096c7] disabled:opacity-50 text-white font-extrabold text-xs rounded-xl transition-all active:scale-95 w-full sm:w-auto"
               >
                 {addMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 Add Row

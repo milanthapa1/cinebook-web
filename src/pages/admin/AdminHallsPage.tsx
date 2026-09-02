@@ -60,12 +60,12 @@ export const AdminHallsPage: React.FC = () => {
 
   return (
     <div className="space-y-5 max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Halls</h1>
           <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">Cinema auditoriums · <span className="font-semibold text-gray-700 dark:text-gray-300">{halls?.length ?? 0}</span> total</p>
         </div>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95">
+        <button onClick={openCreate} className="flex items-center justify-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 shrink-0 w-full sm:w-auto">
           <Plus className="w-3.5 h-3.5" /> Add Hall
         </button>
       </div>
@@ -119,7 +119,7 @@ export const AdminHallsPage: React.FC = () => {
       ) : (
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm dark:bg-gray-900 dark:border-gray-800">
           <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs min-w-[640px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/80 dark:border-gray-800 dark:bg-gray-800/50">
                 {['Hall','Screen Type','Sound System','Seats / Shows','Actions'].map(h => (

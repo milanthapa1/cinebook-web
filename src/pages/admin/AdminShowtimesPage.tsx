@@ -62,11 +62,11 @@ export const AdminShowtimesPage: React.FC = () => {
         </div>
         <div className="flex gap-2 flex-wrap">
           {/* Movie filter */}
-          <div className="relative">
+          <div className="relative flex-1 min-w-[150px] sm:flex-none">
             <select
               value={movieFilter}
               onChange={e => setMovieFilter(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-2 bg-white border border-gray-200 text-gray-700 text-xs rounded-xl focus:outline-none focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 transition-all cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
+              className="appearance-none w-full pl-3 pr-8 py-2 bg-white border border-gray-200 text-gray-700 text-xs rounded-xl focus:outline-none focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 transition-all cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
               <option value="">All Movies</option>
               {movies?.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
             </select>
@@ -81,7 +81,7 @@ export const AdminShowtimesPage: React.FC = () => {
           )}
           <button
             onClick={() => { setForm(BLANK); setEditId(null); setShowForm(true); setError(''); }}
-            className="flex items-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95">
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 flex-1 sm:flex-none">
             <Plus className="w-3.5 h-3.5" /> Add Showtime
           </button>
         </div>

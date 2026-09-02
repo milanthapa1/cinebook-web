@@ -79,18 +79,18 @@ const BookingModal: React.FC<{ id: string; onClose: () => void }> = ({ id, onClo
               </div>
               <Badge s={b.status} />
             </div>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 space-y-1.5 dark:bg-gray-800/50 dark:border-gray-700">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Customer</p>
                 <p className="text-gray-900 font-semibold dark:text-gray-100">{(b as any).user?.name}</p>
-                <p className="text-gray-500 dark:text-gray-400">{(b as any).user?.email}</p>
+                <p className="text-gray-500 break-words dark:text-gray-400">{(b as any).user?.email}</p>
                 <p className="text-gray-500 dark:text-gray-400">{(b as any).user?.phone || '-'}</p>
               </div>
               <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 space-y-1.5 dark:bg-gray-800/50 dark:border-gray-700">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Showtime</p>
                 <p className="text-gray-900 font-semibold truncate dark:text-gray-100">{(b as any).showtime?.movie?.title}</p>
-                <p className="text-gray-500 flex items-center gap-1 dark:text-gray-400"><MapPin className="w-3 h-3" />{(b as any).showtime?.hall?.name}</p>
-                <p className="text-gray-500 flex items-center gap-1 dark:text-gray-400"><Clock className="w-3 h-3" />{(b as any).showtime?.startsAt ? fmt((b as any).showtime.startsAt) : '-'}</p>
+                <p className="text-gray-500 flex items-center gap-1 dark:text-gray-400"><MapPin className="w-3 h-3 shrink-0" />{(b as any).showtime?.hall?.name}</p>
+                <p className="text-gray-500 flex items-center gap-1 dark:text-gray-400"><Clock className="w-3 h-3 shrink-0" />{(b as any).showtime?.startsAt ? fmt((b as any).showtime.startsAt) : '-'}</p>
               </div>
             </div>
             <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 text-xs dark:bg-gray-800/50 dark:border-gray-700">
@@ -146,7 +146,7 @@ export const AdminBookingsPage: React.FC = () => {
 
       {/* Filters bar */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <form onSubmit={e => { e.preventDefault(); setPage(1); }} className="relative flex-1 max-w-xs">
+        <form onSubmit={e => { e.preventDefault(); setPage(1); }} className="relative flex-1 w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
           <input
             value={searchInput}
@@ -157,16 +157,18 @@ export const AdminBookingsPage: React.FC = () => {
         </form>
         <div className="flex items-center gap-1.5 flex-wrap">
           <Filter className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-          {STATUS_FILTERS.map(s => (
-            <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                statusFilter === s
-                  ? 'bg-[#00a8cc] text-white'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-100'
-              }`}>
-              {STATUS_LABELS[s]}
-            </button>
-          ))}
+          <div className="flex flex-wrap gap-1.5">
+            {STATUS_FILTERS.map(s => (
+              <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  statusFilter === s
+                    ? 'bg-[#00a8cc] text-white'
+                    : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-100'
+                }`}>
+                {STATUS_LABELS[s]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -250,7 +252,7 @@ export const AdminBookingsPage: React.FC = () => {
 
       {/* Pagination */}
       {data && data.totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500 dark:text-gray-400">
           <span>Page <span className="font-bold text-gray-700 dark:text-gray-300">{data.page}</span> of <span className="font-bold text-gray-700 dark:text-gray-300">{data.totalPages}</span> · {data.total} results</span>
           <div className="flex gap-2">
             <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}

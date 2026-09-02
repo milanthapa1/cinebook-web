@@ -440,14 +440,14 @@ export const AdminUsersPage: React.FC = () => {
           </p>
         </div>
         {/* Search */}
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative">
+        <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
             <input value={input} onChange={e => setInput(e.target.value)}
               placeholder="Search name or email..."
-              className="pl-9 pr-3 py-2 bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl focus:outline-none w-52 transition-all dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500" />
+              className="pl-9 pr-3 py-2 bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl focus:outline-none w-full sm:w-52 transition-all dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500" />
           </div>
-          <button type="submit" className="px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-semibold text-xs rounded-xl transition-colors">
+          <button type="submit" className="px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-semibold text-xs rounded-xl transition-colors shrink-0">
             Search
           </button>
         </form>
@@ -534,7 +534,8 @@ export const AdminUsersPage: React.FC = () => {
             ))}
           </>
         ) : (
-          <table className="w-full text-xs">
+          <div className="overflow-x-auto">
+          <table className="w-full text-xs min-w-[560px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/80 dark:border-gray-800 dark:bg-gray-800/50">
                 {['User', 'Phone', 'Joined', 'Bookings', 'Status', 'Role', ''].map((h, i) => (
@@ -591,6 +592,7 @@ export const AdminUsersPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
         {!isLoading && !data?.users?.length && (
           <div className="py-16 text-center">
@@ -602,7 +604,7 @@ export const AdminUsersPage: React.FC = () => {
 
       {/* Pagination */}
       {data && data.totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500 dark:text-gray-400">
           <span>Page <span className="font-bold text-gray-700 dark:text-gray-300">{data.page}</span> of{' '}
             <span className="font-bold text-gray-700 dark:text-gray-300">{data.totalPages}</span> · {data.total} users
           </span>

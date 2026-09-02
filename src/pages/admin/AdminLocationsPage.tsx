@@ -240,7 +240,7 @@ export const AdminLocationsPage: React.FC = () => {
   return (
     <div className="space-y-5 max-w-4xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Locations & Cinemas</h1>
           <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
@@ -249,7 +249,7 @@ export const AdminLocationsPage: React.FC = () => {
           </p>
         </div>
         <button onClick={() => setLocForm('new')}
-          className="flex items-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95">
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 shrink-0 w-full sm:w-auto">
           <Plus className="w-3.5 h-3.5" /> Add Location
         </button>
       </div>
@@ -284,7 +284,7 @@ export const AdminLocationsPage: React.FC = () => {
           return (
             <div key={loc.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
               {/* Location header */}
-              <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50"
+              <div className="flex items-center gap-3 px-4 sm:px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50"
                 onClick={() => toggleExpand(loc.id)}>
                 <div className={`w-2 h-2 rounded-full shrink-0 ${loc.isActive ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                 <MapPin className="w-4 h-4 text-[#00a8cc] shrink-0" />
@@ -295,7 +295,7 @@ export const AdminLocationsPage: React.FC = () => {
                     {!loc.isActive && <span className="ml-2 text-amber-500 font-bold">· Inactive</span>}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                   {/* Add cinema */}
                   <button onClick={() => setCinForm({ locationId: loc.id, locationName: loc.name })}
                     title="Add cinema" className="p-1.5 rounded-lg bg-[#00a8cc]/10 hover:bg-[#00a8cc]/20 text-[#00a8cc] transition-colors">
@@ -329,9 +329,9 @@ export const AdminLocationsPage: React.FC = () => {
                     </div>
                   )}
                   {loc.cinemas?.map(cin => (
-                    <div key={cin.id} className="px-6 py-3.5 bg-gray-50/60 dark:bg-gray-800/30">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-start gap-3 min-w-0">
+                    <div key={cin.id} className="px-4 sm:px-6 py-3.5 bg-gray-50/60 dark:bg-gray-800/30">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
                           <div className={`w-1.5 h-1.5 rounded-full mt-2 shrink-0 ${cin.isActive ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                           <Building2 className="w-4 h-4 text-[#00a8cc] shrink-0 mt-0.5" />
                           <div className="min-w-0">
