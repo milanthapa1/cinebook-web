@@ -224,9 +224,14 @@ export const AdminMoviesPage: React.FC = () => {
     if (!form.synopsis.trim()) { setError('Synopsis is required.'); return; }
     if (!form.posterUrl.trim()) { setError('Poster is required.'); return; }
     setError('');
+    const payload = {
+      ...form,
+      trailerUrl: (form.trailerUrl ?? '').trim() || undefined,
+      bannerUrl: (form.bannerUrl ?? '').trim() || undefined,
+    };
     try {
-      if (editId) await updateMut.mutateAsync({ id: editId, ...form });
-      else await createMut.mutateAsync(form as any);
+      if (editId) await updateMut.mutateAsync({ id: editId, ...payload });
+      else await createMut.mutateAsync(payload as any);
       setShowForm(false);
     } catch (e: any) { setError(e.response?.data?.message || 'Save failed'); }
   };
