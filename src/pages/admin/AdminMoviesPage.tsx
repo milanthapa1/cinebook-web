@@ -414,6 +414,17 @@ export const AdminMoviesPage: React.FC = () => {
                 </Field>
               </div>
 
+              {/* Trailer URL - used for the poster play button */}
+              <Field label="Trailer URL (YouTube)">
+                <p className="text-[10px] text-gray-400 mb-1.5 dark:text-gray-500">YouTube embed link shown when clicking the play button on the movie poster. Leave empty to hide the play button.</p>
+                <input
+                  className={inputCls}
+                  value={form.trailerUrl}
+                  onChange={e => set('trailerUrl', e.target.value)}
+                  placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                />
+              </Field>
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
                   <Field label="Title" required>

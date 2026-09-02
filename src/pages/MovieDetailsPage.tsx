@@ -190,7 +190,17 @@ const ComingSoonDetail: React.FC<{movie:any}> = ({movie}) => {
       </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-10 md:items-center">
         <div className="shrink-0 w-full md:w-48 lg:w-52">
-          <img src={movie.posterUrl} alt={movie.title} className="w-full aspect-[2/3] object-cover object-center rounded-lg"/>
+          <div className="relative group">
+            <img src={movie.posterUrl} alt={movie.title} className="w-full aspect-[2/3] object-cover object-center rounded-lg"/>
+            {movie.trailerUrl&&(
+              <button onClick={()=>setShowTrailer(true)} title={`Watch ${movie.title} Trailer`}
+                className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-lg transition-colors">
+                <span className="w-14 h-14 rounded-full bg-white/90 hover:bg-[#00a8cc] text-[#00a8cc] hover:text-gray-900 flex items-center justify-center shadow-xl transition-all hover:scale-105">
+                  <Play className="w-6 h-6 fill-current ml-0.5"/>
+                </span>
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex-1 min-w-0 space-y-4">
           <div>
@@ -310,11 +320,13 @@ const NowShowingDetail: React.FC<{movie:any}> = ({movie}) => {
             {/* Full-width poster, no border radius on sides so it flows with bar */}
             <img src={movie.posterUrl} alt={movie.title}
               className="w-full aspect-[2/3] object-cover object-center block"/>
-            {/* Trailer overlay on hover */}
+            {/* Play button overlay - open trailer modal */}
             {movie.trailerUrl&&(
-              <button onClick={()=>setShowTrailer(true)}
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 hover:bg-[#00a8cc] text-gray-900 text-[11px] font-bold rounded-full border border-white/20 transition-all opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                <Play className="w-3 h-3 fill-white"/> Trailer
+              <button onClick={()=>setShowTrailer(true)} title={`Watch ${movie.title} Trailer`}
+                className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors">
+                <span className="w-16 h-16 rounded-full bg-white/90 hover:bg-[#00a8cc] text-[#00a8cc] hover:text-gray-900 flex items-center justify-center shadow-xl transition-all hover:scale-105">
+                  <Play className="w-7 h-7 fill-current ml-1"/>
+                </span>
               </button>
             )}
           </div>
