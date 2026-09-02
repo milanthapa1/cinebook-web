@@ -12,6 +12,32 @@
  */
 import { API_BASE_URL } from './config';
 
-export function signInWithGoogle(): void {
+const FROM_KEY = 'cinebook_google_from';
+
+export function signInWithGoogle(fromPath?: string): void {
+  if (fromPath && fromPath !== '/') {
+    try {
+      sessionStorage.setItem(FROM_KEY, fromPath);
+    } catch {
+      /* ignore */
+    }
+  } else {
+    try {
+      sessionStorage.removeItem(FROM_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
   window.location.href = `${API_BASE_URL}/auth/google`;
+}
+
+/** Returns (and clears) the path the user intended before Google sign-in. */
+export function takeGoogleReturnPath(): string | null {
+  try {
+    const path = sessionStorage.getItem(FROM_KEY);
+    sessionStorage.removeItem(FROM_KEY);
+    return path;
+  } catch {
+    return null;
+  }
 }

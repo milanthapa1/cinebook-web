@@ -46,15 +46,15 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         onClick={() => !disabled && setOpen((o) => !o)}
         className={`w-full flex items-center gap-2 pl-8 pr-2 py-2 rounded-lg border text-xs transition-all ${
           disabled
-            ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed opacity-50'
+            ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed opacity-50 dark:bg-gray-800 dark:border-gray-700'
             : open
-            ? 'bg-white border-[#00a8cc] text-gray-800'
-            : 'bg-white border-gray-300 text-gray-800 hover:border-[#00a8cc]'
+            ? 'bg-white border-[#00a8cc] text-gray-800 dark:bg-gray-900 dark:text-gray-100'
+            : 'bg-white border-gray-300 text-gray-800 hover:border-[#00a8cc] dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100'
         }`}
       >
         {/* Step badge */}
         <span className={`absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full text-[9px] font-black flex items-center justify-center shrink-0 ${
-          stepActive ? 'bg-[#00a8cc] text-white' : 'bg-gray-300 text-gray-500'
+          stepActive ? 'bg-[#00a8cc] text-white' : 'bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}>
           {stepNumber}
         </span>
@@ -65,7 +65,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       </button>
 
       {open && !disabled && (
-        <div className="absolute top-full mt-1 left-0 right-0 z-50 bg-white border border-gray-300 rounded-lg shadow-2xl overflow-hidden">
+        <div className="absolute top-full mt-1 left-0 right-0 z-50 bg-white border border-gray-300 rounded-lg shadow-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-700">
           <div className="max-h-48 overflow-y-auto">
             {options.map((opt) => (
               <button
@@ -75,7 +75,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 className={`w-full text-left px-3 py-2 text-xs transition-colors ${
                   opt.value === value
                     ? 'bg-[#00a8cc]/15 text-[#00a8cc] font-bold'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
                 }`}
               >
                 {opt.label}
@@ -123,14 +123,14 @@ const LocationDropdown: React.FC<{
         aria-expanded={open}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-colors ${
           loading
-            ? 'bg-gray-100 border-gray-300 cursor-default'
+            ? 'bg-gray-100 border-gray-300 cursor-default dark:bg-gray-800 dark:border-gray-700'
             : open
-            ? 'bg-white border-[#00a8cc] shadow-sm'
-            : 'bg-gray-100 border-gray-300 hover:border-[#00a8cc]/60'
+            ? 'bg-white border-[#00a8cc] shadow-sm dark:bg-gray-900'
+            : 'bg-gray-100 border-gray-300 hover:border-[#00a8cc]/60 dark:bg-gray-800 dark:border-gray-700'
         }`}
       >
         <MapPin className="w-3.5 h-3.5 text-[#00a8cc] shrink-0" />
-        <span className="text-xs font-bold text-gray-900 max-w-[140px] truncate">
+        <span className="text-xs font-bold text-gray-900 max-w-[140px] truncate dark:text-gray-100">
           {value || (loading ? 'Loading cities…' : 'Select city')}
         </span>
         <ChevronDown className={`w-3 h-3 text-gray-500 shrink-0 transition-transform duration-150 ${open ? 'rotate-180' : ''}`} />
@@ -139,9 +139,9 @@ const LocationDropdown: React.FC<{
       {open && !loading && (
         <div
           role="listbox"
-          className="absolute left-0 top-full mt-1.5 min-w-[220px] bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50"
+          className="absolute left-0 top-full mt-1.5 min-w-[220px] bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50 dark:bg-gray-900 dark:border-gray-700"
         >
-          <p className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-gray-400 border-b border-gray-100 bg-gray-50">
+          <p className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-gray-400 border-b border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
             Choose your city
           </p>
           <div className="max-h-60 overflow-y-auto py-1">
@@ -158,10 +158,10 @@ const LocationDropdown: React.FC<{
                 className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors ${
                   loc === value
                     ? 'text-[#00a8cc] font-bold'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
                 }`}
               >
-                <MapPin className={`w-3 h-3 shrink-0 ${loc === value ? 'text-[#00a8cc]' : 'text-gray-300'}`} />
+                <MapPin className={`w-3 h-3 shrink-0 ${loc === value ? 'text-[#00a8cc]' : 'text-gray-300 dark:text-gray-600'}`} />
                 <span className="flex-1 truncate">{loc}</span>
                 {loc === value && <Check className="w-3.5 h-3.5 shrink-0 text-[#00a8cc]" />}
               </button>
@@ -200,7 +200,7 @@ const UserMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00a8cc]/50"
+        className="flex items-center gap-1.5 p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00a8cc]/50 dark:hover:bg-gray-800"
         title={user.name}
       >
         {user.avatarUrl ? (
@@ -218,17 +218,17 @@ const UserMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-            <p className="text-xs font-bold text-gray-900 truncate">{user.name}</p>
-            <p className="text-[11px] text-gray-500 truncate mt-0.5">{user.email}</p>
+        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150 dark:bg-gray-900 dark:border-gray-700">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+            <p className="text-xs font-bold text-gray-900 truncate dark:text-gray-100">{user.name}</p>
+            <p className="text-[11px] text-gray-500 truncate mt-0.5 dark:text-gray-400">{user.email}</p>
           </div>
 
           <div className="py-1">
             <Link
               to="/profile"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#00a8cc]/10 hover:text-[#00a8cc] transition-colors"
+              className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#00a8cc]/10 hover:text-[#00a8cc] transition-colors dark:text-gray-300"
             >
               <User className="w-3.5 h-3.5" />
               Account Settings
@@ -236,7 +236,7 @@ const UserMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             <Link
               to="/profile?tab=tickets"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#00a8cc]/10 hover:text-[#00a8cc] transition-colors"
+              className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#00a8cc]/10 hover:text-[#00a8cc] transition-colors dark:text-gray-300"
             >
               <TicketCheck className="w-3.5 h-3.5" />
               My Tickets
@@ -253,7 +253,7 @@ const UserMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             )}
           </div>
 
-          <div className="border-t border-gray-200 py-1">
+          <div className="border-t border-gray-200 py-1 dark:border-gray-700">
             <button
               onClick={() => { setOpen(false); onLogout(); }}
               className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-500/10 transition-colors"
@@ -341,7 +341,7 @@ export const Navbar: React.FC = () => {
   const dateOptions: DropdownOption[] = dates.map((d) => ({ label: d.label, value: d.iso }));
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-950 dark:border-gray-800">
 
       {/* ── Top Navbar ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -349,7 +349,7 @@ export const Navbar: React.FC = () => {
         {/* Left: Logo + Location */}
         <div className="flex items-center gap-5 shrink-0">
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="text-xl font-black tracking-tight text-[#00a8cc] group-hover:text-[#00bce0] transition-colors">
+            <span className="font-logo text-3xl font-normal text-[#00a8cc] group-hover:text-[#00bce0] transition-colors leading-none">
               CINEBOOK
             </span>
           </Link>
@@ -365,17 +365,17 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Center: Nav Links */}
-        <nav className="hidden lg:flex items-center gap-6 text-[11px] font-semibold uppercase tracking-widest text-gray-600">
-          <Link to="/movies" className="hover:text-gray-900 transition-colors">Movies</Link>
-          <Link to="/showtimes" className="hover:text-gray-900 transition-colors">Showtimes</Link>
-          <Link to="/contact" className="hover:text-gray-900 transition-colors">Customer Service</Link>
+        <nav className="hidden lg:flex items-center gap-6 text-[11px] font-semibold uppercase tracking-widest text-gray-600 dark:text-gray-300">
+          <Link to="/movies" className="hover:text-gray-900 transition-colors dark:hover:text-white">Movies</Link>
+          <Link to="/showtimes" className="hover:text-gray-900 transition-colors dark:hover:text-white">Showtimes</Link>
+          <Link to="/contact" className="hover:text-gray-900 transition-colors dark:hover:text-white">Customer Service</Link>
         </nav>
 
         {/* Right: Search + Auth */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => navigate('/movies')}
-            className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800"
             title="Browse movies"
           >
             <Search className="w-4 h-4" />
@@ -395,7 +395,7 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* ── Quick Booking Bar ── */}
-      <div className="bg-gray-50 border-t border-gray-200 py-2 px-4">
+      <div className="bg-gray-50 border-t border-gray-200 py-2 px-4 dark:bg-gray-900 dark:border-gray-800">
         <div className="max-w-7xl mx-auto flex items-center gap-2">
 
           {/* Label */}
@@ -405,7 +405,7 @@ export const Navbar: React.FC = () => {
           </span>
 
           {/* Separator */}
-          <div className="hidden sm:block w-px h-6 bg-gray-300 shrink-0 mx-1" />
+          <div className="hidden sm:block w-px h-6 bg-gray-300 shrink-0 mx-1 dark:bg-gray-700" />
 
           {/* Step 1: Cinema */}
           <CustomDropdown

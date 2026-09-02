@@ -60,14 +60,14 @@ const SidebarContent: React.FC<{
   const initials = user.name.charAt(0).toUpperCase();
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200 dark:bg-gray-900 dark:border-gray-800">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100">
+      <div className="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[#00a8cc] flex items-center justify-center shrink-0">
             <Film className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-sm font-bold text-gray-900 tracking-tight">CINEBOOK</span>
+          <span className="font-logo text-xl font-normal text-gray-900 tracking-tight leading-none dark:text-gray-100">CINEBOOK</span>
         </Link>
         <p className="text-[10px] text-gray-400 font-medium mt-1 ml-[38px]">Admin Panel</p>
       </div>
@@ -88,7 +88,7 @@ const SidebarContent: React.FC<{
                     className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors group ${
                       active
                         ? 'bg-[#00a8cc] text-white'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100'
                     }`}
                   >
                     <item.Icon className={`w-[15px] h-[15px] shrink-0 ${active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}`} />
@@ -102,13 +102,13 @@ const SidebarContent: React.FC<{
       </nav>
 
       {/* User button - ChatGPT style popover */}
-      <div className="relative p-3 border-t border-gray-100" ref={popoverRef}>
+      <div className="relative p-3 border-t border-gray-100 dark:border-gray-800" ref={popoverRef}>
         {/* Popover menu - opens upward */}
         {popoverOpen && (
-          <div className="absolute bottom-[72px] left-3 right-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+          <div className="absolute bottom-[72px] left-3 right-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 dark:bg-gray-900 dark:border-gray-800">
             {/* User info header */}
-            <div className="px-4 py-3 border-b border-gray-100">
-              <p className="text-xs font-semibold text-gray-900 truncate">{user.name}</p>
+            <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-900 truncate dark:text-gray-100">{user.name}</p>
               <p className="text-[11px] text-gray-400 truncate">{user.email}</p>
             </div>
             {/* Actions */}
@@ -116,7 +116,7 @@ const SidebarContent: React.FC<{
               <Link
                 to="/"
                 onClick={() => setPopoverOpen(false)}
-                className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[12px] font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[12px] font-medium text-gray-600 hover:bg-gray-100 transition-colors dark:text-gray-400 dark:hover:bg-gray-800"
               >
                 <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
                 View Site
@@ -136,7 +136,7 @@ const SidebarContent: React.FC<{
         <button
           onClick={() => setPopoverOpen(p => !p)}
           className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-colors ${
-            popoverOpen ? 'bg-gray-100' : 'hover:bg-gray-100'
+            popoverOpen ? 'bg-gray-100 dark:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
           }`}
         >
           {user.avatarUrl ? (
@@ -147,7 +147,7 @@ const SidebarContent: React.FC<{
             </div>
           )}
           <div className="overflow-hidden flex-1 min-w-0 text-left">
-            <p className="text-xs font-semibold text-gray-900 truncate leading-tight">{user.name}</p>
+            <p className="text-xs font-semibold text-gray-900 truncate leading-tight dark:text-gray-100">{user.name}</p>
             <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
           </div>
           <ChevronRight className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform duration-200 ${popoverOpen ? '-rotate-90' : 'rotate-90'}`} />
@@ -170,7 +170,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex">
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex dark:bg-gray-950 dark:text-gray-100">
 
       {/* Desktop sidebar */}
       <aside className="hidden md:block w-56 shrink-0 fixed inset-y-0 left-0 z-30">
@@ -191,11 +191,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       <div className="flex-1 md:ml-56 flex flex-col min-h-screen">
 
         {/* Sticky topbar */}
-        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 px-5 md:px-7 py-3.5 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 px-5 md:px-7 py-3.5 flex items-center justify-between gap-4 dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
-              className="md:hidden p-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+              className="md:hidden p-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             >
               <Menu className="w-4 h-4" />
             </button>
@@ -204,7 +204,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               {activeItem && (
                 <>
                   <ChevronRight className="w-3.5 h-3.5 text-gray-300 hidden sm:block" />
-                  <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                  <span className="font-semibold text-gray-900 flex items-center gap-1.5 dark:text-gray-100">
                     <activeItem.Icon className="w-3.5 h-3.5 text-[#00a8cc]" />
                     {activeItem.label}
                   </span>

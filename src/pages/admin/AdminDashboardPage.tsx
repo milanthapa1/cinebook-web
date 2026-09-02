@@ -14,15 +14,15 @@ const Stat: React.FC<{
 }> = ({ label, value, sub, icon, iconBg, to }) => (
   <Link
     to={to}
-    className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 hover:border-[#00a8cc]/50 hover:shadow-md transition-all duration-200 group"
+    className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 hover:border-[#00a8cc]/50 hover:shadow-md transition-all duration-200 group dark:bg-gray-900 dark:border-gray-800"
   >
     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
       {icon}
     </div>
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">{label}</p>
-      <p className="text-3xl font-extrabold text-gray-900 mt-1 leading-none">{value}</p>
-      {sub && <p className="text-[11px] text-gray-500 mt-1.5">{sub}</p>}
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">{label}</p>
+      <p className="text-3xl font-extrabold text-gray-900 mt-1 leading-none dark:text-gray-100">{value}</p>
+      {sub && <p className="text-[11px] text-gray-500 mt-1.5 dark:text-gray-400">{sub}</p>}
     </div>
   </Link>
 );
@@ -57,15 +57,96 @@ export const AdminDashboardPage: React.FC = () => {
 
   if (isLoading) return (
     <div className="space-y-6 max-w-6xl">
-      <div className="h-8 shimmer rounded-xl w-48" />
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1.5">
+          <div className="skeleton h-6 w-32 rounded" />
+          <div className="skeleton h-3 w-40 rounded" />
+        </div>
+        <div className="skeleton h-3 w-40 rounded hidden sm:block" />
+      </div>
+
+      {/* Stat cards skeleton */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[1,2,3,4].map(n => <div key={n} className="h-36 shimmer rounded-2xl" />)}
+        {[1,2,3,4].map(n => (
+          <div key={n} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 dark:bg-gray-900 dark:border-gray-800">
+            <div className="skeleton w-10 h-10 rounded-xl" />
+            <div className="space-y-1.5">
+              <div className="skeleton h-2.5 w-16 rounded" />
+              <div className="skeleton h-7 w-20 rounded" />
+              {n % 2 === 0 && <div className="skeleton h-2.5 w-24 rounded" />}
+            </div>
+          </div>
+        ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="h-52 shimmer rounded-2xl" />
-        <div className="h-52 shimmer rounded-2xl" />
+
+      {/* Charts row skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        {/* Revenue chart */}
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded-2xl p-5 space-y-4 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <div className="skeleton h-3.5 w-36 rounded" />
+              <div className="skeleton h-2.5 w-32 rounded" />
+            </div>
+            <div className="skeleton h-3 w-16 rounded" />
+          </div>
+          {/* Bar chart */}
+          <div className="flex items-end gap-1.5 h-32">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+                <div className="w-full flex flex-col justify-end" style={{ height: '100px' }}>
+                  <div className="w-full skeleton rounded-t" style={{ height: `${20 + Math.random() * 60}%` }} />
+                </div>
+                <div className="skeleton h-2 w-6 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Movies */}
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col dark:bg-gray-900 dark:border-gray-800">
+          <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <div className="skeleton h-3.5 w-24 rounded" />
+            <div className="skeleton h-2.5 w-12 rounded" />
+          </div>
+          <div className="flex-1 divide-y divide-gray-50 dark:divide-gray-800">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 px-5 py-3">
+                <div className="skeleton h-2.5 w-4 rounded" />
+                <div className="skeleton w-6 h-9 rounded shrink-0" />
+                <div className="skeleton h-2.5 flex-1 rounded" />
+                <div className="skeleton h-2.5 w-6 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="h-64 shimmer rounded-2xl" />
+
+      {/* Recent Bookings skeleton */}
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <div className="skeleton h-3.5 w-32 rounded" />
+          <div className="skeleton h-2.5 w-16 rounded" />
+        </div>
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="px-5 py-3.5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="skeleton w-8 h-8 rounded-lg shrink-0" />
+                <div className="space-y-1 min-w-0">
+                  <div className="skeleton h-2.5 w-32 rounded" />
+                  <div className="skeleton h-2 w-40 rounded" />
+                </div>
+              </div>
+              <div className="text-right space-y-1 shrink-0">
+                <div className="skeleton h-2.5 w-16 rounded ml-auto" />
+                <div className="skeleton h-4 w-16 rounded-full ml-auto" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -80,10 +161,10 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Cinema operations overview</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">Cinema operations overview</p>
         </div>
-        <p className="text-xs font-medium text-gray-400 hidden sm:block">
+        <p className="text-xs font-medium text-gray-400 hidden sm:block dark:text-gray-500">
           {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
       </div>
@@ -126,14 +207,14 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
         {/* Revenue chart */}
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded-2xl p-5 space-y-4 dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-gray-100">
                 <TrendingUp className="w-4 h-4 text-[#00a8cc]" /> Revenue - Last 7 Days
               </h2>
-              <p className="text-[11px] text-gray-400 mt-0.5">
-                Total: <span className="font-semibold text-gray-600">NPR {totalWeekRevenue.toLocaleString()}</span>
+              <p className="text-[11px] text-gray-400 mt-0.5 dark:text-gray-500">
+                Total: <span className="font-semibold text-gray-600 dark:text-gray-300">NPR {totalWeekRevenue.toLocaleString()}</span>
               </p>
             </div>
             <Link to="/admin/bookings" className="text-[11px] text-[#00a8cc] font-semibold hover:underline flex items-center gap-1">
@@ -142,29 +223,29 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
           {dailyVals.length > 0
             ? <MiniChart keys={dailyKeys} vals={dailyVals} maxVal={maxVal} />
-            : <div className="h-32 flex items-center justify-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl">No revenue data yet</div>
+            : <div className="h-32 flex items-center justify-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl dark:border-gray-700">No revenue data yet</div>
           }
         </div>
 
         {/* Top Movies */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-            <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col dark:bg-gray-900 dark:border-gray-800">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0 dark:border-gray-800">
+            <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-gray-100">
               <Film className="w-4 h-4 text-[#00a8cc]" /> Top Movies
             </h2>
             <Link to="/admin/movies" className="text-[11px] text-[#00a8cc] font-semibold hover:underline">View all</Link>
           </div>
-          <div className="flex-1 divide-y divide-gray-50">
+          <div className="flex-1 divide-y divide-gray-50 dark:divide-gray-800">
             {stats?.topMovies?.length ? stats.topMovies.map((m, i) => (
-              <div key={m.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors">
+              <div key={m.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50">
                 <span className="text-[10px] font-bold text-gray-400 w-4 shrink-0 tabular-nums">#{i + 1}</span>
-                <img src={m.posterUrl} alt={m.title} className="w-6 h-9 rounded object-cover shrink-0 border border-gray-100" />
-                <span className="text-xs font-medium text-gray-800 flex-1 truncate">{m.title}</span>
+                <img src={m.posterUrl} alt={m.title} className="w-6 h-9 rounded object-cover shrink-0 border border-gray-100 dark:border-gray-700" />
+                <span className="text-xs font-medium text-gray-800 flex-1 truncate dark:text-gray-100">{m.title}</span>
                 <span className="text-[11px] font-semibold text-[#00a8cc] shrink-0 tabular-nums">{m.count}</span>
               </div>
             )) : (
               <div className="flex items-center justify-center py-10">
-                <p className="text-xs text-gray-400">No bookings yet</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">No bookings yet</p>
               </div>
             )}
           </div>
@@ -172,9 +253,9 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Recent Bookings */}
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between dark:border-gray-800">
+          <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-gray-100">
             <Clock className="w-4 h-4 text-[#00a8cc]" /> Recent Bookings
           </h2>
           <Link to="/admin/bookings" className="text-[11px] text-[#00a8cc] font-semibold hover:underline flex items-center gap-1">
@@ -182,24 +263,24 @@ export const AdminDashboardPage: React.FC = () => {
           </Link>
         </div>
         {stats?.recentBookings?.length ? (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-800">
             {stats.recentBookings.map(b => (
-              <div key={b.id} className="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+              <div key={b.id} className="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 dark:bg-gray-800">
                     <Ticket className="w-4 h-4 text-gray-500" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-gray-900 truncate">{(b as any).showtime?.movie?.title ?? 'Movie'}</p>
-                    <p className="text-[11px] text-gray-500 truncate">{(b as any).user?.name} · {(b as any).user?.email}</p>
+                    <p className="text-xs font-semibold text-gray-900 truncate dark:text-gray-100">{(b as any).showtime?.movie?.title ?? 'Movie'}</p>
+                    <p className="text-[11px] text-gray-500 truncate dark:text-gray-400">{(b as any).user?.name} · {(b as any).user?.email}</p>
                   </div>
                 </div>
                 <div className="text-right shrink-0 space-y-1">
-                  <p className="text-xs font-bold text-gray-900">NPR {Number(b.totalAmount).toFixed(0)}</p>
+                  <p className="text-xs font-bold text-gray-900 dark:text-gray-100">NPR {Number(b.totalAmount).toFixed(0)}</p>
                   <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
-                    b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-600'
-                    : b.status === 'CANCELLED' ? 'bg-rose-50 text-rose-600'
-                    : 'bg-amber-50 text-amber-600'
+                    b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300'
+                    : b.status === 'CANCELLED' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300'
+                    : 'bg-amber-50 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300'
                   }`}>{b.status}</span>
                 </div>
               </div>
@@ -208,7 +289,7 @@ export const AdminDashboardPage: React.FC = () => {
         ) : (
           <div className="py-14 text-center">
             <CalendarDays className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm text-gray-400">No bookings yet</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">No bookings yet</p>
           </div>
         )}
       </div>

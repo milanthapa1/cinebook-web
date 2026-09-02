@@ -33,10 +33,10 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   return (
     <div
       onClick={handleClick}
-      className="group relative bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:border-[#00a8cc]/50 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+      className="group relative bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:border-[#00a8cc]/50 transition-all duration-300 hover:-translate-y-1 flex flex-col dark:bg-gray-900 dark:border-gray-800"
     >
       {/* Poster */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-200">
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-200 dark:bg-gray-800">
         <img
           src={movie.posterUrl}
           alt={movie.title}
@@ -99,11 +99,11 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
       <div className="ticket-dashed-line" />
 
       {/* Footer */}
-      <div className="px-3 py-2.5 bg-gray-50 flex-1 flex flex-col justify-center">
-        <h3 className="text-xs font-extrabold text-gray-900 group-hover:text-[#00a8cc] transition-colors truncate leading-tight">
+      <div className="px-3 py-2.5 bg-gray-50 flex-1 flex flex-col justify-center dark:bg-gray-800">
+        <h3 className="text-xs font-extrabold text-gray-900 group-hover:text-[#00a8cc] transition-colors truncate leading-tight dark:text-gray-100">
           {movie.title}
         </h3>
-        <p className="text-[10px] text-gray-500 truncate mt-0.5">
+        <p className="text-[10px] text-gray-500 truncate mt-0.5 dark:text-gray-400">
           {movie.language} &bull; {movie.runtimeMins}m &bull; {(movie.genre || []).slice(0, 1).join(', ')}
         </p>
       </div>
@@ -154,16 +154,16 @@ export const MoviesPage: React.FC = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-gray-900 tracking-tight">Movies</h1>
+        <h1 className="text-2xl font-black text-gray-900 tracking-tight dark:text-gray-100">Movies</h1>
         <p className="text-xs text-gray-500 mt-1">
-          <span className="text-emerald-600 font-bold">{nowCount} Now Showing</span>
-          <span className="mx-2 text-gray-300">·</span>
-          <span className="text-amber-600 font-bold">{soonCount} Coming Soon</span>
+          <span className="text-emerald-600 font-bold dark:text-emerald-400">{nowCount} Now Showing</span>
+          <span className="mx-2 text-gray-300 dark:text-gray-700">·</span>
+          <span className="text-amber-600 font-bold dark:text-amber-400">{soonCount} Coming Soon</span>
         </p>
       </div>
 
       {/* Search + Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 shadow-sm">
+      <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 shadow-sm dark:bg-gray-900 dark:border-gray-800">
         <div className="relative">
           <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
@@ -171,23 +171,23 @@ export const MoviesPage: React.FC = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by title, genre or language..."
-            className="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+            className="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
           />
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs">
           <select value={selectedGenre} onChange={e => setSelectedGenre(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs">
+            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
             <option value="">All Genres</option>
             {genres.map(g => <option key={g}>{g}</option>)}
           </select>
           <select value={selectedLanguage} onChange={e => setSelectedLanguage(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs">
+            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
             <option value="">All Languages</option>
             {languages.map(l => <option key={l}>{l}</option>)}
           </select>
           <select value={selectedFormat} onChange={e => setSelectedFormat(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs">
+            className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#00a8cc] text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
             <option value="">All Formats</option>
             {formats.map(f => <option key={f}>{f}</option>)}
           </select>
@@ -205,7 +205,7 @@ export const MoviesPage: React.FC = () => {
             key={val}
             onClick={() => setActiveTab(val)}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-              activeTab === val ? 'bg-[#00a8cc] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-900'
+              activeTab === val ? 'bg-[#00a8cc] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-900 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white'
             }`}
           >
             {label}
@@ -217,7 +217,27 @@ export const MoviesPage: React.FC = () => {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="aspect-[2/3] shimmer rounded-xl" />
+            <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 dark:bg-gray-900 dark:border-gray-800">
+              {/* Poster area with badges */}
+              <div className="relative aspect-[2/3] w-full overflow-hidden">
+                <div className="skeleton w-full h-full rounded-none" />
+                {/* Status badge - top left */}
+                <div className="absolute top-2 left-2">
+                  <div className="skeleton h-4 w-20 rounded-full bg-white/30" />
+                </div>
+                {/* Rating badge - top right */}
+                <div className="absolute top-2 right-2">
+                  <div className="skeleton h-4 w-7 rounded bg-white/30" />
+                </div>
+              </div>
+              {/* Dashed divider */}
+              <div className="border-t-2 border-dashed border-gray-200 dark:border-gray-700" />
+              {/* Footer */}
+              <div className="px-3 py-2.5 bg-gray-50 dark:bg-gray-800 space-y-1.5">
+                <div className="skeleton h-3 w-3/4 rounded" />
+                <div className="skeleton h-2.5 w-1/2 rounded" />
+              </div>
+            </div>
           ))}
         </div>
       ) : movies.length > 0 ? (
@@ -227,8 +247,8 @@ export const MoviesPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 space-y-3 shadow-sm">
-          <p className="text-sm font-semibold text-gray-600">No movies match your filters</p>
+        <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 space-y-3 shadow-sm dark:bg-gray-900 dark:border-gray-800">
+          <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">No movies match your filters</p>
           <button onClick={() => { setSearch(''); setSelectedGenre(''); setSelectedLanguage(''); setSelectedFormat(''); setActiveTab('all'); }}
             className="text-xs text-[#00a8cc] font-bold hover:underline">Clear Filters</button>
         </div>

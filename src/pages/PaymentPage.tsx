@@ -103,8 +103,52 @@ export const PaymentPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-20">
-        <div className="h-80 shimmer rounded-2xl" />
+      <div className="max-w-xl mx-auto px-4 py-20 space-y-6">
+        {/* Breadcrumb skeleton */}
+        <div className="bg-white border-b border-gray-200 py-3 px-4 -mx-4">
+          <div className="max-w-2xl mx-auto flex items-center gap-4">
+            <div className="skeleton h-6 w-6 rounded" />
+            <div className="skeleton h-3 w-24 rounded" />
+            <div className="skeleton h-3 w-20 rounded" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="text-center space-y-2">
+          <div className="skeleton h-7 w-56 rounded mx-auto" />
+          <div className="skeleton h-3 w-64 rounded mx-auto" />
+        </div>
+
+        {/* Amount card */}
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 flex justify-between items-center shadow-sm">
+          <div className="space-y-1.5">
+            <div className="skeleton h-3 w-36 rounded" />
+            <div className="skeleton h-2.5 w-24 rounded" />
+          </div>
+          <div className="skeleton h-9 w-32 rounded" />
+        </div>
+
+        {/* Gateway card */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 shadow-sm">
+          <div className="skeleton h-3 w-36 rounded" />
+          {/* eSewa option */}
+          <div className="p-5 rounded-2xl border border-gray-200">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="skeleton w-5 h-5 rounded" />
+                <div className="space-y-1">
+                  <div className="skeleton h-4 w-16 rounded" />
+                  <div className="skeleton h-2.5 w-40 rounded" />
+                </div>
+              </div>
+              <div className="skeleton h-6 w-16 rounded-full" />
+            </div>
+          </div>
+          {/* Security notice */}
+          <div className="skeleton h-10 w-full rounded-xl" />
+          {/* Pay button */}
+          <div className="skeleton h-14 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -112,8 +156,8 @@ export const PaymentPage: React.FC = () => {
   if (!booking) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Booking Not Found</h2>
-        <p className="text-sm text-gray-500">This booking may have expired or you may not have access to it.</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Booking Not Found</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">This booking may have expired or you may not have access to it.</p>
         <Link to="/profile" className="inline-block px-5 py-2 rounded-xl bg-[#00a8cc] text-white text-sm font-semibold">
           Go to My Bookings
         </Link>
@@ -122,11 +166,11 @@ export const PaymentPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-24 dark:bg-gray-950">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 shadow-sm">
+      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 shadow-sm dark:bg-gray-900 dark:border-gray-800">
         <div className="max-w-2xl mx-auto flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
-          <button onClick={() => navigate(-1)} className="p-1 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-300 transition-colors">
+          <button onClick={() => navigate(-1)} className="p-1 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-300 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:border-gray-700">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-gray-400">Now Showing</span>
@@ -136,47 +180,47 @@ export const PaymentPage: React.FC = () => {
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Checkout & Payment</h1>
-          <p className="text-xs text-gray-500">Choose a payment gateway to complete your booking</p>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight dark:text-gray-100">Checkout & Payment</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Choose a payment gateway to complete your booking</p>
         </div>
 
         {errorMsg && (
-          <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-3 text-sm text-rose-600">
+          <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-3 text-sm text-rose-600 dark:text-rose-400">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {/* Amount Card */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 flex justify-between items-center shadow-sm">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 flex justify-between items-center shadow-sm dark:bg-gray-900 dark:border-gray-800">
           <div>
-            <span className="text-[11px] text-gray-500 font-semibold block uppercase tracking-wider">Total Amount Payable</span>
-            <span className="text-[10px] text-gray-400 font-mono">Ref: #{booking.id.slice(-8).toUpperCase()}</span>
+            <span className="text-[11px] text-gray-500 font-semibold block uppercase tracking-wider dark:text-gray-400">Total Amount Payable</span>
+            <span className="text-[10px] text-gray-400 font-mono dark:text-gray-500">Ref: #{booking.id.slice(-8).toUpperCase()}</span>
           </div>
-          <span className="text-3xl font-black text-gray-900">NPR {Number(booking.totalAmount).toFixed(2)}</span>
+          <span className="text-3xl font-black text-gray-900 dark:text-gray-100">NPR {Number(booking.totalAmount).toFixed(2)}</span>
         </div>
 
         {/* Gateway Selector */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 shadow-sm">
-          <h3 className="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Select Digital Wallet</h3>
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 shadow-sm dark:bg-gray-900 dark:border-gray-800">
+          <h3 className="text-xs font-extrabold text-gray-500 uppercase tracking-widest dark:text-gray-400">Select Digital Wallet</h3>
 
-          <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50 shadow-sm">
+          <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50 shadow-sm dark:border-emerald-800 dark:bg-emerald-900/20">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-emerald-600" />
+                <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 <div>
-                  <p className="font-extrabold text-emerald-600 text-base">eSewa</p>
-                  <p className="text-[11px] text-gray-500">Direct e-payment via eSewa account</p>
+                  <p className="font-extrabold text-emerald-600 text-base dark:text-emerald-400">eSewa</p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Direct e-payment via eSewa account</p>
                 </div>
               </div>
-              <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+              <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-800 dark:text-emerald-200">
                 Selected
               </span>
             </div>
           </div>
 
           {/* Security Notice */}
-          <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-2.5 text-xs text-gray-500">
+          <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-2.5 text-xs text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>You will be redirected to the eSewa gateway. Payment is verified server-side before your booking is confirmed.</span>
           </div>

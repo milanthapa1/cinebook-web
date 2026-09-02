@@ -29,12 +29,8 @@ export function apiLocationsToMap(apiLocations: AdminLocation[]): Record<string,
 
 // ─── Zustand store (persists selected location choice) ────────────────────────
 export interface LocationState {
-  /** Empty until the visitor picks a city for the first time. */
   selectedLocation: string;
   setSelectedLocation: (location: string) => void;
-  /** True once the first-visit city picker has been dismissed without choosing. */
-  dismissedCityPicker: boolean;
-  dismissCityPicker: () => void;
 }
 
 export const useLocationStore = create<LocationState>()(
@@ -42,8 +38,6 @@ export const useLocationStore = create<LocationState>()(
     (set) => ({
       selectedLocation: '',
       setSelectedLocation: (location) => set({ selectedLocation: location }),
-      dismissedCityPicker: false,
-      dismissCityPicker: () => set({ dismissedCityPicker: true }),
     }),
     { name: 'cinebook-location-storage' }
   )

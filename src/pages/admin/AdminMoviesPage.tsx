@@ -17,11 +17,11 @@ const BLANK: Omit<AdminMovie, 'id' | 'createdAt'> & { director: string } = {
   cast: [], director: '', releaseDate: new Date().toISOString().split('T')[0], isShowing: true,
 };
 
-const inputCls = 'w-full bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl px-3 py-2.5 focus:outline-none transition-all placeholder:text-gray-400';
+const inputCls = 'w-full bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl px-3 py-2.5 focus:outline-none transition-all placeholder:text-gray-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500';
 
 const Field: React.FC<{ label: string; required?: boolean; children: React.ReactNode }> = ({ label, required, children }) => (
   <div>
-    <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+    <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wide mb-1.5 dark:text-gray-400">
       {label}{required && <span className="text-rose-500 ml-0.5">*</span>}
     </label>
     {children}
@@ -36,8 +36,8 @@ const MovieCard: React.FC<{
   onToggle: (id: string) => void;
   toggling: boolean;
 }> = ({ movie, onEdit, onDelete, onToggle, toggling }) => (
-  <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all duration-200 hover:-translate-y-0.5 flex flex-col">
-    <div className="relative aspect-[2/3] bg-gray-100 overflow-hidden">
+  <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all duration-200 hover:-translate-y-0.5 flex flex-col dark:bg-gray-900 dark:border-gray-800 dark:hover:border-gray-700">
+    <div className="relative aspect-[2/3] bg-gray-100 overflow-hidden dark:bg-gray-800">
       <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
@@ -75,8 +75,8 @@ const MovieCard: React.FC<{
 
     {/* Info strip */}
     <div className="px-3 py-2.5 flex-1 flex flex-col gap-1">
-      <h3 className="text-xs font-bold text-gray-900 leading-tight line-clamp-1">{movie.title}</h3>
-      <div className="flex items-center gap-2 text-[10px] text-gray-500">
+      <h3 className="text-xs font-bold text-gray-900 leading-tight line-clamp-1 dark:text-gray-100">{movie.title}</h3>
+      <div className="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400">
         <span className="flex items-center gap-0.5"><Clock className="w-3 h-3" />{movie.runtimeMins}m</span>
         <span>·</span>
         <span className="flex items-center gap-0.5"><Globe className="w-3 h-3" />{(movie.language || '').split(',')[0].trim()}</span>
@@ -111,7 +111,7 @@ const CastEditor: React.FC<{
       ))}
       <button
         onClick={add}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 hover:text-[#00a8cc] transition-colors w-full justify-center"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 hover:text-[#00a8cc] transition-colors w-full justify-center dark:border-gray-700 dark:text-gray-400"
       >
         <UserPlus className="w-3.5 h-3.5" /> Add Cast Member
       </button>
@@ -187,6 +187,19 @@ export const AdminMoviesPage: React.FC = () => {
 
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return;
+
+    // Validate that the uploaded image is landscape (wider than tall)
+    const dimensions = await new Promise<{ width: number; height: number }>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      img.src = URL.createObjectURL(file);
+    });
+    if (dimensions.height > dimensions.width) {
+      setError('Banner must be a landscape (horizontal) image. Portrait images will look zoomed in the hero.');
+      e.target.value = '';
+      return;
+    }
+
     setUB(true);
     try {
       const sig = await apiClient.post('/uploads/signature?folder=cinebook/banners');
@@ -196,8 +209,12 @@ export const AdminMoviesPage: React.FC = () => {
       fd.append('timestamp', String(timestamp)); fd.append('signature', signature); fd.append('folder', folder);
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: fd });
       const d = await r.json();
-      if (d.secure_url) set('bannerUrl', d.secure_url);
-      else setError('Banner upload failed - no URL returned');
+      if (d.secure_url) {
+        // Inject Cloudinary transformation: fill to 1920x500, focus on top-center
+        // e.g. .../upload/c_fill,w_1920,h_500,g_north/...
+        const transformedUrl = d.secure_url.replace('/upload/', '/upload/c_fill,w_1920,h_500,g_north/');
+        set('bannerUrl', transformedUrl);
+      } else setError('Banner upload failed - no URL returned');
     } catch { setError('Banner upload failed'); }
     finally { setUB(false); }
   };
@@ -228,9 +245,9 @@ export const AdminMoviesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Movies</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            <span className="font-semibold text-gray-700">{movies?.length ?? 0}</span> total · <span className="text-emerald-600 font-semibold">{nowShowing} showing</span> · <span className="text-amber-600 font-semibold">{upcoming} upcoming</span>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Movies</h1>
+          <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
+            <span className="font-semibold text-gray-700 dark:text-gray-300">{movies?.length ?? 0}</span> total · <span className="text-emerald-600 font-semibold">{nowShowing} showing</span> · <span className="text-amber-600 font-semibold">{upcoming} upcoming</span>
           </p>
         </div>
         <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-bold text-xs rounded-xl transition-all active:scale-95 shrink-0">
@@ -243,12 +260,12 @@ export const AdminMoviesPage: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search movies..."
-            className="w-full bg-white border border-gray-200 focus:border-[#00a8cc] text-gray-900 text-xs rounded-lg pl-8 pr-3 py-2.5 focus:outline-none transition-colors" />
+            className="w-full bg-white border border-gray-200 focus:border-[#00a8cc] text-gray-900 text-xs rounded-lg pl-8 pr-3 py-2.5 focus:outline-none transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500" />
         </div>
         <div className="flex gap-1.5">
           {(['all','showing','upcoming'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold capitalize transition-colors ${filter===f?'bg-[#00a8cc] text-white':'bg-white border border-gray-200 text-gray-600 hover:text-gray-900'}`}>
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold capitalize transition-colors ${filter===f?'bg-[#00a8cc] text-white':'bg-white border border-gray-200 text-gray-600 hover:text-gray-900 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:text-gray-100'}`}>
               {f}
             </button>
           ))}
@@ -260,10 +277,35 @@ export const AdminMoviesPage: React.FC = () => {
       {/* Grid */}
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-          {Array.from({length:12}).map((_,i) => <div key={i} className="aspect-[2/3] shimmer rounded-xl" />)}
+          {Array.from({length:12}).map((_,i) => (
+            <div key={i} className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="relative aspect-[2/3] bg-gray-100 overflow-hidden dark:bg-gray-800">
+                <div className="skeleton w-full h-full rounded-none" />
+                {/* Status badge */}
+                <div className="absolute top-2 left-2">
+                  <div className="skeleton h-4 w-12 rounded-md bg-white/30" />
+                </div>
+                {/* Rating */}
+                <div className="absolute top-2 right-2">
+                  <div className="skeleton h-4 w-7 rounded bg-white/30" />
+                </div>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              </div>
+              {/* Info strip */}
+              <div className="px-3 py-2.5 space-y-1.5">
+                <div className="skeleton h-3 w-3/4 rounded" />
+                <div className="flex items-center gap-2">
+                  <div className="skeleton h-2.5 w-10 rounded" />
+                  <div className="skeleton h-2.5 w-14 rounded" />
+                  <div className="skeleton h-2.5 w-12 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-400 space-y-2">
+        <div className="flex flex-col items-center justify-center py-20 text-gray-400 space-y-2 dark:text-gray-500">
           <Film className="w-8 h-8 opacity-30" />
           <p className="text-sm font-semibold">No movies found</p>
           {search && <p className="text-xs">Try a different search term</p>}
@@ -280,20 +322,20 @@ export const AdminMoviesPage: React.FC = () => {
       {/* Delete confirm */}
       {confirmDelete && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 max-w-xs w-full space-y-4 shadow-2xl">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 max-w-xs w-full space-y-4 shadow-2xl dark:bg-gray-900 dark:border-gray-800">
             <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center">
               <Trash2 className="w-5 h-5 text-rose-500" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Delete this movie?</h3>
-              <p className="text-xs text-gray-600 mt-1">Permanent. All showtimes and bookings will also be removed.</p>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">Delete this movie?</h3>
+              <p className="text-xs text-gray-600 mt-1 dark:text-gray-400">Permanent. All showtimes and bookings will also be removed.</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => handleDelete(confirmDelete)} disabled={deleteMut.isPending}
                 className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg flex items-center justify-center gap-2 transition-colors">
                 {deleteMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Yes, Delete'}
               </button>
-              <button onClick={() => setConfirm(null)} className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-lg transition-colors">Cancel</button>
+              <button onClick={() => setConfirm(null)} className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-lg transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200">Cancel</button>
             </div>
           </div>
         </div>
@@ -303,20 +345,20 @@ export const AdminMoviesPage: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 z-50 flex">
           <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
-          <div className="w-full max-w-lg bg-white border-l border-gray-200 flex flex-col shadow-2xl overflow-hidden">
+          <div className="w-full max-w-lg bg-white border-l border-gray-200 flex flex-col shadow-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 shrink-0 dark:border-gray-800">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 bg-[#00a8cc]/10 rounded-lg flex items-center justify-center">
                   <Film className="w-3.5 h-3.5 text-[#00a8cc]" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-gray-900">{editId ? 'Edit Movie' : 'Add New Movie'}</h2>
-                  <p className="text-[10px] text-gray-500">{editId ? 'Update details below' : 'Fill in all required fields'}</p>
+                  <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">{editId ? 'Edit Movie' : 'Add New Movie'}</h2>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">{editId ? 'Update details below' : 'Fill in all required fields'}</p>
                 </div>
               </div>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors dark:hover:bg-gray-800 dark:text-gray-400">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -327,14 +369,14 @@ export const AdminMoviesPage: React.FC = () => {
 
               {/* Poster preview + upload */}
               <div className="flex gap-4 items-start">
-                <div className="w-20 aspect-[2/3] bg-gray-100 rounded-xl border border-gray-200 overflow-hidden shrink-0">
+                <div className="w-20 aspect-[2/3] bg-gray-100 rounded-xl border border-gray-200 overflow-hidden shrink-0 dark:bg-gray-800 dark:border-gray-700">
                   {form.posterUrl
                     ? <img src={form.posterUrl} alt="poster" className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center text-gray-400"><Film className="w-6 h-6" /></div>}
+                    : <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500"><Film className="w-6 h-6" /></div>}
                 </div>
                 <div className="flex-1 space-y-2">
                   <Field label="Poster Image" required>
-                    <label className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 cursor-pointer transition-colors ${uploadingPoster ? 'opacity-60 pointer-events-none' : ''}`}>
+                    <label className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 cursor-pointer transition-colors dark:border-gray-700 dark:text-gray-400 ${uploadingPoster ? 'opacity-60 pointer-events-none' : ''}`}>
                       {uploadingPoster ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00a8cc]" /> : <Plus className="w-3.5 h-3.5" />}
                       {uploadingPoster ? 'Uploading...' : 'Upload poster from device'}
                       <input type="file" accept="image/*" className="hidden" onChange={handlePosterUpload} disabled={uploadingPoster} />
@@ -346,9 +388,9 @@ export const AdminMoviesPage: React.FC = () => {
               {/* Banner image upload - used as hero slide background */}
               <div className="space-y-2">
                 <Field label="Hero Banner Image">
-                  <p className="text-[10px] text-gray-400 mb-1.5">Wide landscape image (1920×800 recommended) shown in the homepage hero slideshow. Falls back to poster if not set.</p>
+                  <p className="text-[10px] text-gray-400 mb-1.5 dark:text-gray-500">Wide landscape image (1920×600 recommended) shown in the homepage hero slideshow. Falls back to poster if not set.</p>
                   {form.bannerUrl ? (
-                    <div className="relative w-full aspect-[21/6] rounded-xl overflow-hidden border border-gray-200 bg-gray-100 group mb-2">
+                    <div className="relative w-full aspect-[21/6] rounded-xl overflow-hidden border border-gray-200 bg-gray-100 group mb-2 dark:border-gray-700 dark:bg-gray-800">
                       <img src={form.bannerUrl} alt="banner preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -360,11 +402,11 @@ export const AdminMoviesPage: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-full aspect-[21/6] rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300 mb-2">
+                    <div className="w-full aspect-[21/6] rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300 mb-2 dark:border-gray-700 dark:bg-gray-800">
                       <Film className="w-8 h-8" />
                     </div>
                   )}
-                  <label className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 cursor-pointer transition-colors ${uploadingBanner ? 'opacity-60 pointer-events-none' : ''}`}>
+                  <label className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#00a8cc] text-[11px] text-gray-500 cursor-pointer transition-colors dark:border-gray-700 dark:text-gray-400 ${uploadingBanner ? 'opacity-60 pointer-events-none' : ''}`}>
                     {uploadingBanner ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00a8cc]" /> : <Plus className="w-3.5 h-3.5" />}
                     {uploadingBanner ? 'Uploading banner...' : 'Upload banner from device'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} disabled={uploadingBanner} />
@@ -426,11 +468,11 @@ export const AdminMoviesPage: React.FC = () => {
                   <Field label="Status">
                     <div className="flex gap-2">
                       <button type="button" onClick={() => set('isShowing', true)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${form.isShowing ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-600' : 'bg-gray-100 border-gray-300 text-gray-500 hover:text-gray-700'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${form.isShowing ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-600 dark:bg-emerald-900/40 dark:border-emerald-800 dark:text-emerald-300' : 'bg-gray-100 border-gray-300 text-gray-500 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}>
                         <Eye className="w-3.5 h-3.5" /> Now Showing
                       </button>
                       <button type="button" onClick={() => set('isShowing', false)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${!form.isShowing ? 'bg-amber-500/15 border-amber-500/50 text-amber-600' : 'bg-gray-100 border-gray-300 text-gray-500 hover:text-gray-700'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${!form.isShowing ? 'bg-amber-500/15 border-amber-500/50 text-amber-600 dark:bg-amber-900/40 dark:border-amber-800 dark:text-amber-300' : 'bg-gray-100 border-gray-300 text-gray-500 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}>
                         <EyeOff className="w-3.5 h-3.5" /> Coming Soon
                       </button>
                     </div>
@@ -447,13 +489,13 @@ export const AdminMoviesPage: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="shrink-0 flex gap-2.5 px-5 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="shrink-0 flex gap-2.5 px-5 py-4 border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
               <button onClick={handleSubmit} disabled={createMut.isPending || updateMut.isPending}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-extrabold text-xs rounded-xl transition-all active:scale-95 disabled:opacity-60">
                 {(createMut.isPending || updateMut.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                 {editId ? 'Save Changes' : 'Create Movie'}
               </button>
-              <button onClick={() => setShowForm(false)} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors">Cancel</button>
+              <button onClick={() => setShowForm(false)} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200">Cancel</button>
             </div>
           </div>
         </div>

@@ -37,8 +37,8 @@ export const FAQPage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Frequently Asked Questions</h1>
-        <p className="text-sm text-gray-500">Search questions about seat holds, payments, and ticket policies</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight dark:text-gray-100">Frequently Asked Questions</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Search questions about seat holds, payments, and ticket policies</p>
       </div>
 
       {/* Search */}
@@ -49,20 +49,20 @@ export const FAQPage: React.FC = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search FAQs..."
-          className="w-full bg-white border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+          className="w-full bg-white border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
       </div>
 
       {/* Accordion */}
       <div className="space-y-3">
         {filtered.length === 0 && (
-          <p className="text-center text-sm text-gray-400 py-8">No results found for "{search}"</p>
+          <p className="text-center text-sm text-gray-400 py-8 dark:text-gray-500">No results found for "{search}"</p>
         )}
         {filtered.map((faq, idx) => (
-          <div key={idx} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div key={idx} className="bg-white rounded-xl border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
             <button
               onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-              className="w-full p-5 text-left text-sm font-semibold text-gray-900 flex justify-between items-center gap-4 hover:bg-gray-50 transition-colors"
+              className="w-full p-5 text-left text-sm font-semibold text-gray-900 flex justify-between items-center gap-4 hover:bg-gray-50 transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
             >
               <span>{faq.q}</span>
               <ChevronDown
@@ -72,7 +72,7 @@ export const FAQPage: React.FC = () => {
               />
             </button>
             {openIndex === idx && (
-              <div className="px-5 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+              <div className="px-5 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100 dark:text-gray-400 dark:border-gray-800">
                 {faq.a}
               </div>
             )}

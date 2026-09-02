@@ -37,14 +37,44 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
 
   if (isLoading) return (
     <div className="space-y-4 py-6">
-      <div className="max-w-xl mx-auto text-center">
-        <div className="w-full h-2 bg-[#00a8cc] rounded-t-full opacity-70" />
-        <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 block">Screen</span>
+      {/* Screen */}
+      <div className="max-w-xl mx-auto text-center space-y-1">
+        <div className="w-full h-2 bg-[#00a8cc]/30 rounded-t-full" />
+        <div className="skeleton h-2.5 w-12 mx-auto rounded" />
       </div>
-      <div className="flex flex-col items-center gap-2">
-        {['A','B','C','D','E','F'].map(r => (
-          <div key={r} className="flex gap-1.5">
-            {Array.from({ length: 10 }).map((_, i) => <div key={i} className="w-6 h-6 shimmer rounded" />)}
+      {/* Tier label */}
+      <div className="skeleton h-3 w-40 mx-auto rounded" />
+      {/* Seat rows with tier separator */}
+      <div className="flex flex-col items-center gap-3">
+        {['A','B','C'].map(r => (
+          <div key={r} className="flex items-center gap-2">
+            <span className="w-5 skeleton h-3.5 rounded text-center" />
+            <div className="flex gap-1.5">
+              {Array.from({ length: 10 }).map((_, i) => <div key={i} className="w-6 h-6 skeleton rounded" />)}
+            </div>
+            <span className="w-5 skeleton h-3.5 rounded text-center" />
+          </div>
+        ))}
+      </div>
+      {/* Tier label 2 */}
+      <div className="skeleton h-3 w-36 mx-auto rounded mt-2" />
+      <div className="flex flex-col items-center gap-3">
+        {['D','E','F'].map(r => (
+          <div key={r} className="flex items-center gap-2">
+            <span className="w-5 skeleton h-3.5 rounded text-center" />
+            <div className="flex gap-1.5">
+              {Array.from({ length: 10 }).map((_, i) => <div key={i} className="w-6 h-6 skeleton rounded" />)}
+            </div>
+            <span className="w-5 skeleton h-3.5 rounded text-center" />
+          </div>
+        ))}
+      </div>
+      {/* Legend */}
+      <div className="flex justify-center gap-5 pt-3 border-t border-gray-200 dark:border-gray-800">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <div className="skeleton w-4 h-4 rounded" />
+            <div className="skeleton h-2.5 w-12 rounded" />
           </div>
         ))}
       </div>
@@ -67,7 +97,7 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
   return (
     <div className="space-y-6">
       {seatError && (
-        <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-600">
+        <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-600 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-400">
           <span>{seatError}</span>
           <button onClick={clearSeatError} className="ml-4 text-amber-500 hover:text-amber-700">✕</button>
         </div>
@@ -79,7 +109,7 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
       <div className="space-y-6 overflow-x-auto pb-2">
         {Object.values(tierMap).map(tier => (
           <div key={tier.label} className="space-y-2 min-w-max mx-auto">
-            <p className="text-center text-[10px] font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-1">{tier.label}</p>
+            <p className="text-center text-[10px] font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-1 dark:text-gray-400 dark:border-gray-800">{tier.label}</p>
             {Array.from(new Set(tier.seats.map(s => s.row))).sort().map(row => {
               const rowSeats = tier.seats.filter(s => s.row === row).sort((a, b) => a.number - b.number);
               return (
@@ -98,10 +128,10 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
                           }}
                           title={isUnavail ? `Seat ${seat.row}${seat.number} - BOOKED` : `${seat.row}${seat.number} - NPR ${seat.price}`}
                           className={`w-6 h-6 rounded text-[9px] font-semibold transition-all border flex items-center justify-center ${
-                            isUnavail ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed pointer-events-none'
+                            isUnavail ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed pointer-events-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-500'
                             : isSel ? 'bg-amber-400 border-amber-300 text-black scale-110'
-                            : seat.status === 'HELD' ? 'bg-orange-100 border-orange-300 text-orange-600 cursor-not-allowed pointer-events-none'
-                            : 'bg-white border-[#00a8cc] text-[#00a8cc] hover:bg-[#00a8cc] hover:text-white'
+                            : seat.status === 'HELD' ? 'bg-orange-100 border-orange-300 text-orange-600 cursor-not-allowed pointer-events-none dark:bg-orange-900/40 dark:border-orange-700 dark:text-orange-400'
+                            : 'bg-white border-[#00a8cc] text-[#00a8cc] hover:bg-[#00a8cc] hover:text-white dark:bg-gray-800'
                           }`}
                         >{seat.number}</button>
                       );
@@ -114,8 +144,8 @@ const SeatMap: React.FC<{ showtimeId: string; movieTitle: string; language: stri
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-gray-500 pt-3 border-t border-gray-100">
-        <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded border border-[#00a8cc] bg-white inline-block" /> Available</span>
+      <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-gray-500 pt-3 border-t border-gray-100 dark:text-gray-400 dark:border-gray-800">
+        <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded border border-[#00a8cc] bg-white inline-block dark:bg-gray-800" /> Available</span>
         <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-amber-400 inline-block" /> Selected</span>
         <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-orange-100 border border-orange-300 inline-block" /> Held</span>
         <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-gray-200 inline-block" /> Booked</span>
@@ -153,14 +183,14 @@ const BrowseShowtimes: React.FC = () => {
   }, [showtimes, selectedLocation]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-24 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm dark:bg-gray-900 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-          <h1 className="text-base font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-base font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
             <CalendarDays className="w-4 h-4 text-[#00a8cc]" /> All Showtimes
           </h1>
-          <span className="text-xs text-gray-500">{selectedLocation}</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">{selectedLocation}</span>
         </div>
       </div>
 
@@ -172,7 +202,7 @@ const BrowseShowtimes: React.FC = () => {
               className={`px-3 py-2 rounded-xl text-center min-w-[64px] border transition-all shrink-0 ${
                 selectedDateIso === d.iso
                   ? 'bg-[#00a8cc] border-[#00a8cc] text-white'
-                  : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                  : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300'
               }`}>
               <span className="block text-[10px] uppercase font-medium">{d.shortLabel}</span>
               <span className="block text-base font-bold leading-tight">{d.dateNum}</span>
@@ -184,25 +214,50 @@ const BrowseShowtimes: React.FC = () => {
         {/* Results */}
         {isLoading ? (
           <div className="space-y-4">
-            {[1,2,3].map(n => <div key={n} className="h-32 shimmer rounded-2xl" />)}
+            {[1,2,3].map(n => (
+              <div key={n} className="bg-white border border-gray-200 rounded-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                {/* Movie header row */}
+                <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+                  <div className="skeleton w-10 h-14 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="skeleton h-3.5 w-32 rounded" />
+                    <div className="skeleton h-2.5 w-40 rounded" />
+                  </div>
+                  <div className="skeleton h-3 w-16 rounded shrink-0" />
+                </div>
+                {/* Cinema groups + time slots */}
+                <div className="px-5 py-4 space-y-4">
+                  {Array.from({ length: 2 }).map((_, gi) => (
+                    <div key={gi} className="space-y-2">
+                      <div className="skeleton h-2.5 w-28 rounded" />
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from({ length: 3 }).map((_, si) => (
+                          <div key={si} className="skeleton h-12 w-16 rounded-xl" />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         ) : byMovie.length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-2xl py-20 text-center space-y-3">
-            <Film className="w-10 h-10 text-gray-300 mx-auto" />
-            <p className="text-sm font-semibold text-gray-500">No showtimes scheduled for this date</p>
-            <p className="text-xs text-gray-400">Try selecting a different date above</p>
+          <div className="bg-white border border-gray-200 rounded-2xl py-20 text-center space-y-3 dark:bg-gray-900 dark:border-gray-800">
+            <Film className="w-10 h-10 text-gray-300 mx-auto dark:text-gray-700" />
+            <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">No showtimes scheduled for this date</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Try selecting a different date above</p>
           </div>
         ) : (
           <div className="space-y-4">
             {byMovie.map(({ movie, groups }) => (
-              <div key={movie.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div key={movie.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 {/* Movie header row */}
-                <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
                   <img src={movie.posterUrl} alt={movie.title}
-                    className="w-10 h-14 rounded-lg object-cover border border-gray-200 shrink-0" />
+                    className="w-10 h-14 rounded-lg object-cover border border-gray-200 shrink-0 dark:border-gray-700" />
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-sm font-semibold text-gray-900 truncate">{movie.title}</h2>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
+                    <h2 className="text-sm font-semibold text-gray-900 truncate dark:text-gray-100">{movie.title}</h2>
+                    <p className="text-[11px] text-gray-500 mt-0.5 dark:text-gray-400">
                       {movie.language} · {movie.runtimeMins}m · {movie.rating}
                     </p>
                   </div>
@@ -216,7 +271,7 @@ const BrowseShowtimes: React.FC = () => {
                 <div className="px-5 py-4 space-y-4">
                   {groups.map(group => (
                     <div key={group.cinemaId}>
-                      <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 dark:text-gray-400">
                         {group.cinemaName}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -225,14 +280,14 @@ const BrowseShowtimes: React.FC = () => {
                           return (
                             <button key={slot.showtimeId}
                               disabled={isPast}
-                              onClick={() => !isPast && navigate(`/showtimes?movieId=${movie.id}&time=${encodeURIComponent(slot.showtimeId)}`)}
+                              onClick={() => !isPast && navigate(`/showtimes?movieId=${movie.id}&date=${selectedDateIso}&time=${encodeURIComponent(slot.showtimeId)}`)}
                               className={`px-3.5 py-2 rounded-xl border transition-all text-left ${
                                 isPast
-                                  ? 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed opacity-60'
-                                  : 'bg-gray-50 border-gray-200 hover:border-[#00a8cc] hover:bg-[#00a8cc]/5'
+                                  ? 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed opacity-60 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600'
+                                  : 'bg-gray-50 border-gray-200 hover:border-[#00a8cc] hover:bg-[#00a8cc]/5 dark:bg-gray-800 dark:border-gray-700'
                               }`}>
-                              <span className={`block text-xs font-semibold ${isPast ? 'text-gray-300' : 'text-gray-800'}`}>{slot.time}</span>
-                              <span className={`block text-[9px] mt-0.5 ${isPast ? 'text-gray-300' : 'text-gray-400'}`}>
+                              <span className={`block text-xs font-semibold ${isPast ? 'text-gray-300 dark:text-gray-600' : 'text-gray-800 dark:text-gray-100'}`}>{slot.time}</span>
+                              <span className={`block text-[9px] mt-0.5 ${isPast ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400'}`}>
                                 {isPast ? 'Show ended' : slot.fmt}
                               </span>
                             </button>
@@ -272,11 +327,11 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
 
   const [selectedDateIso, setSelectedDateIso]           = useState(initialIso);
   const [selectedCinemaFilter, setSelectedCinemaFilter] = useState(quickCinema || 'All');
-  const [selectedLanguageFilter, setSelectedLanguageFilter] = useState('All');
   const [step1Expanded, setStep1Expanded] = useState(true);
   const [step2Expanded, setStep2Expanded] = useState(false);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
   const [holdError, setHoldError] = useState('');
+  const [showFullSynopsis, setShowFullSynopsis] = useState(false);
 
   const { data: showtimes, isLoading: showtimesLoading } = useShowtimes({
     movieId: rawMovie?.id ?? movieIdParam,
@@ -350,16 +405,103 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
 
   // Show skeleton only while actively loading the movie
   if (movieLoading) return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 mt-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="bg-white rounded-xl p-4 space-y-3 border border-gray-200">
-          <div className="aspect-[2/3] shimmer rounded-lg" />
-          <div className="h-4 shimmer rounded w-3/4" />
-          <div className="h-3 shimmer rounded w-1/2" />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      {/* Breadcrumb skeleton */}
+      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 shadow-sm dark:bg-gray-900 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto flex items-center gap-3">
+          <div className="skeleton h-7 w-7 rounded-lg" />
+          <div className="skeleton h-3 w-24 rounded" />
+          <div className="skeleton h-3 w-3 rounded" />
+          <div className="skeleton h-3 w-16 rounded" />
+          <div className="skeleton h-3 w-3 rounded" />
+          <div className="skeleton h-3 w-16 rounded" />
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar skeleton */}
+        <aside>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4 shadow-sm dark:bg-gray-900 dark:border-gray-800">
+            {/* Poster */}
+            <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="skeleton w-full h-full rounded-none" />
+              {/* Badge bar */}
+              <div className="skeleton h-5 w-full absolute top-0 rounded-none bg-[#00a8cc]/30" />
+            </div>
+            {/* Info */}
+            <div className="space-y-2">
+              <div className="skeleton h-2.5 w-20 rounded" />
+              <div className="skeleton h-3.5 w-full rounded" />
+              <div className="skeleton h-3.5 w-2/3 rounded" />
+              <div className="flex gap-2">
+                <div className="skeleton h-5 w-16 rounded" />
+                <div className="skeleton h-5 w-10 rounded" />
+              </div>
+              <div className="skeleton h-2.5 w-full rounded" />
+              <div className="skeleton h-2.5 w-full rounded" />
+              <div className="skeleton h-2.5 w-3/4 rounded" />
+            </div>
+          </div>
+        </aside>
+
+        {/* Main panel skeleton */}
         <div className="lg:col-span-3 space-y-4">
-          <div className="h-16 shimmer rounded-xl" />
-          <div className="h-48 shimmer rounded-xl" />
+          {/* Step 1 */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm dark:bg-gray-900 dark:border-gray-800">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 flex items-center gap-2.5 border-b border-gray-200 dark:border-gray-700">
+              <div className="skeleton h-6 w-6 rounded-full" />
+              <div className="skeleton h-3.5 w-48 rounded" />
+            </div>
+            <div className="p-5 space-y-6">
+              {/* Date strip */}
+              <div>
+                <div className="skeleton h-2.5 w-20 rounded mb-3" />
+                <div className="flex gap-2">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={i} className="skeleton h-16 w-16 rounded-xl" />
+                  ))}
+                </div>
+              </div>
+              {/* Cinema filter */}
+              <div>
+                <div className="skeleton h-2.5 w-32 rounded mb-3" />
+                <div className="flex gap-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="skeleton h-8 w-16 rounded-lg" />
+                  ))}
+                </div>
+              </div>
+              {/* Time slots */}
+              <div className="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-4">
+                <div className="space-y-2">
+                  <div className="skeleton h-2.5 w-32 rounded" />
+                  <div className="flex flex-wrap gap-2.5">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="skeleton h-12 w-20 rounded-xl" />
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="skeleton h-2.5 w-24 rounded" />
+                  <div className="flex flex-wrap gap-2.5">
+                    {Array.from({ length: 2 }).map((_, i) => (
+                      <div key={i} className="skeleton h-12 w-20 rounded-xl" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {/* Please Note */}
+              <div className="skeleton h-16 w-full rounded-xl" />
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="bg-white rounded-xl border border-gray-200/50 overflow-hidden shadow-sm opacity-60 dark:bg-gray-900 dark:border-gray-800">
+            <div className="p-4 flex items-center gap-2.5">
+              <div className="skeleton h-6 w-6 rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="skeleton h-3.5 w-24 rounded" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -367,11 +509,11 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
 
   // Movie not found - show a helpful message instead of eternal skeleton
   if (!rawMovie) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center dark:bg-gray-950">
       <div className="text-center space-y-4 px-4">
-        <Film className="w-12 h-12 text-gray-300 mx-auto" />
-        <h2 className="text-lg font-semibold text-gray-700">Movie not found</h2>
-        <p className="text-sm text-gray-500">We couldn't find this movie. It may have been removed.</p>
+        <Film className="w-12 h-12 text-gray-300 mx-auto dark:text-gray-700" />
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Movie not found</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">We couldn't find this movie. It may have been removed.</p>
         <button onClick={() => navigate('/showtimes')}
           className="px-5 py-2 bg-[#00a8cc] hover:bg-[#0096c7] text-white text-sm font-semibold rounded-xl transition-colors">
           Browse All Showtimes
@@ -424,18 +566,18 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24">
+    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24 dark:bg-gray-950 dark:text-gray-100">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 shadow-sm">
+      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 shadow-sm dark:bg-gray-900 dark:border-gray-800">
         <div className="max-w-7xl mx-auto flex items-center gap-3 text-xs font-semibold uppercase tracking-wider">
           <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg bg-[#00a8cc] text-white hover:bg-[#0096c7] transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-[#00a8cc] border-b-2 border-[#00a8cc] pb-0.5">Select Showtime</span>
-          <span className="text-gray-300">→</span>
-          <span className={selectedSlot ? 'text-[#00a8cc]' : 'text-gray-400'}>Pick Seats</span>
-          <span className="text-gray-300">→</span>
-          <span className="text-gray-400">Checkout</span>
+          <span className="text-gray-300 dark:text-gray-600">→</span>
+          <span className={selectedSlot ? 'text-[#00a8cc]' : 'text-gray-400 dark:text-gray-500'}>Pick Seats</span>
+          <span className="text-gray-300 dark:text-gray-600">→</span>
+          <span className="text-gray-400 dark:text-gray-500">Checkout</span>
         </div>
       </div>
 
@@ -443,8 +585,8 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
 
         {/* ── Sidebar ── */}
         <aside className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4 sticky top-32 shadow-sm">
-            <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-gray-200 bg-gray-100 group">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4 sticky top-32 shadow-sm dark:bg-gray-900 dark:border-gray-800">
+            <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-gray-200 bg-gray-100 group dark:border-gray-700 dark:bg-gray-800">
               <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
               <div className="qfx-card-top-bar absolute top-0 inset-x-0 text-center text-white text-[10px] font-semibold uppercase py-1">
                 {movie.badge || (movie.isShowing ? 'Now Showing' : 'Coming Soon')}
@@ -458,23 +600,31 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
             </div>
             <div className="space-y-1.5 text-xs">
               <span className="text-[10px] font-semibold text-[#00a8cc] uppercase">Now Showing</span>
-              <h2 className="text-sm font-semibold text-gray-900 leading-tight">
-                {movie.title} <span className="text-gray-400 font-normal">({movie.year})</span>
+              <h2 className="text-sm font-semibold text-gray-900 leading-tight dark:text-gray-100">
+                {movie.title} <span className="text-gray-400 font-normal dark:text-gray-500">({movie.year})</span>
               </h2>
               <div className="flex items-center gap-2 pt-0.5">
                 <span className="px-2 py-0.5 bg-[#00a8cc] text-white text-[10px] font-semibold rounded">{movie.runtimeMins} mins</span>
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-semibold rounded">{movie.rating}</span>
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-semibold rounded dark:bg-gray-800 dark:text-gray-300">{movie.rating}</span>
               </div>
-              <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-3 pt-1">{movie.synopsis}</p>
+              <p className={`text-[11px] text-gray-500 leading-relaxed pt-1 dark:text-gray-400 ${showFullSynopsis ? '' : 'line-clamp-3'}`}>{movie.synopsis}</p>
+              {movie.synopsis && movie.synopsis.length > 140 && (
+                <button
+                  onClick={() => setShowFullSynopsis(s => !s)}
+                  className="text-[11px] text-[#00a8cc] hover:underline font-semibold pt-0.5"
+                >
+                  {showFullSynopsis ? 'Read less' : 'Read more'}
+                </button>
+              )}
             </div>
             {selectedSlot && (
               <div className="p-3 bg-[#00a8cc]/8 border border-[#00a8cc]/20 rounded-xl space-y-1 text-[11px]">
                 <p className="font-semibold text-[#00a8cc] flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Showtime Selected
                 </p>
-                <p className="text-gray-700 font-medium">{selectedSlot.cinema}</p>
-                <p className="text-gray-900 font-bold">{selectedSlot.time}</p>
-                <p className="text-gray-500">{selectedSlot.fmt} · {selectedSlot.language}</p>
+                <p className="text-gray-700 font-medium dark:text-gray-300">{selectedSlot.cinema}</p>
+                <p className="text-gray-900 font-bold dark:text-gray-100">{selectedSlot.time}</p>
+                <p className="text-gray-500 dark:text-gray-400">{selectedSlot.fmt} · {selectedSlot.language}</p>
                 <button onClick={() => { setStep1Expanded(true); setStep2Expanded(false); }}
                   className="text-[#00a8cc] hover:underline text-[10px] font-semibold mt-1">Change showtime</button>
               </div>
@@ -486,14 +636,14 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
         <div className="lg:col-span-3 space-y-4">
 
           {/* Step 1 */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm dark:bg-gray-900 dark:border-gray-800">
             <div onClick={() => setStep1Expanded(!step1Expanded)}
-              className="p-4 bg-gray-50 flex items-center justify-between cursor-pointer border-b border-gray-200 hover:bg-gray-100 transition-colors">
+              className="p-4 bg-gray-50 flex items-center justify-between cursor-pointer border-b border-gray-200 hover:bg-gray-100 transition-colors dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-800/80">
               <div className="flex items-center gap-2.5">
                 <span className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center shrink-0 ${selectedSlot ? 'bg-emerald-500 text-white' : 'bg-[#00a8cc] text-white'}`}>
                   {selectedSlot ? '✓' : '1'}
                 </span>
-                <span className="text-sm font-semibold text-gray-900">Select Date, Cinema &amp; Time</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Select Date, Cinema &amp; Time</span>
                 {selectedSlot && (
                   <span className="text-xs text-[#00a8cc] hidden sm:inline">
                     {selectedSlot.time} at {selectedSlot.cinema}
@@ -507,14 +657,14 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
               <div className="p-5 space-y-6">
                 {/* Date strip */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-600 mb-2">Select Date</p>
+                  <p className="text-xs font-semibold text-gray-600 mb-2 dark:text-gray-400">Select Date</p>
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                     {bookingDates.map(d => (
                       <button key={d.iso} onClick={() => { setSelectedDateIso(d.iso); setSelectedSlot(null); clearSelection(); }}
                         className={`px-3 py-2 rounded-xl text-center min-w-[62px] border transition-all shrink-0 ${
                           selectedDateIso === d.iso
                             ? 'bg-[#00a8cc] border-[#00a8cc] text-white'
-                            : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300'
+                            : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300'
                         }`}>
                         <span className="block text-[10px] uppercase font-medium">{d.shortLabel}</span>
                         <span className="block text-base font-bold leading-tight">{d.dateNum}</span>
@@ -526,51 +676,51 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
 
                 {/* Cinema filter */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-600 mb-2">Cinema ({selectedLocation})</p>
+                  <p className="text-xs font-semibold text-gray-600 mb-2 dark:text-gray-400">Cinema ({selectedLocation})</p>
                   <div className="flex flex-wrap gap-2">
                     {['All', ...cinemaFilterOptions].map(name => (
                       <button key={name} onClick={() => setSelectedCinemaFilter(name)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           selectedCinemaFilter === name
                             ? 'bg-[#00a8cc] text-white'
-                            : 'bg-gray-100 border border-gray-200 text-gray-600 hover:text-gray-900'
+                            : 'bg-gray-100 border border-gray-200 text-gray-600 hover:text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300'
                         }`}>{name}</button>
                     ))}
                   </div>
                 </div>
 
-                {/* Language filter */}
-                <div>
-                  <p className="text-xs font-semibold text-gray-600 mb-2">Language</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {['All','English','Hindi Dubbed','Nepali'].map(lang => (
-                      <button key={lang} onClick={() => setSelectedLanguageFilter(lang)}
-                        className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                          selectedLanguageFilter === lang
-                            ? 'bg-[#00a8cc] text-white'
-                            : 'bg-gray-100 border border-gray-200 text-gray-600 hover:text-gray-900'
-                        }`}>{lang}</button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Timeslots */}
-                <div className="space-y-5 pt-2 border-t border-gray-100">
+                <div className="space-y-5 pt-2 border-t border-gray-100 dark:border-gray-800">
                   {showtimesLoading && (
-                    <div className="space-y-3">
-                      {[1,2].map(n => <div key={n} className="h-16 shimmer rounded-xl" />)}
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="skeleton h-2.5 w-32 rounded" />
+                        <div className="flex flex-wrap gap-2.5">
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="skeleton h-12 w-20 rounded-xl" />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="skeleton h-2.5 w-24 rounded" />
+                        <div className="flex flex-wrap gap-2.5">
+                          {Array.from({ length: 2 }).map((_, i) => (
+                            <div key={i} className="skeleton h-12 w-20 rounded-xl" />
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                   {!showtimesLoading && filteredGroups.length === 0 && (
                     <div className="text-center py-8 space-y-2">
-                      <CalendarDays className="w-8 h-8 text-gray-300 mx-auto" />
-                      <p className="text-xs text-gray-500">No showtimes for this date.</p>
+                      <CalendarDays className="w-8 h-8 text-gray-300 mx-auto dark:text-gray-700" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">No showtimes for this date.</p>
                     </div>
                   )}
                   {filteredGroups.map(group => (
                     <div key={group.cinemaId} className="space-y-2">
-                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">{group.cinemaName}
-                        <span className="text-gray-400 ml-1.5 font-normal normal-case tracking-normal">({movie.language})</span>
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide dark:text-gray-200">{group.cinemaName}
+                        <span className="text-gray-400 ml-1.5 font-normal normal-case tracking-normal dark:text-gray-500">({movie.language})</span>
                       </p>
                       <div className="flex flex-wrap gap-2.5">
                         {group.slots.map(slot => {
@@ -582,13 +732,13 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
                               onClick={() => !isPast && handleSelectSlot(group.cinemaName, group.cinemaId, slot.time, slot.fmt, movie.language, slot.showtimeId)}
                               className={`px-3.5 py-2.5 rounded-xl text-left transition-all border relative ${
                                 isPast
-                                  ? 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed opacity-60'
+                                  ? 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed opacity-60 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600'
                                   : isSel
                                   ? 'bg-[#00a8cc] border-[#00a8cc] text-white scale-105'
-                                  : 'bg-gray-50 border-gray-200 hover:border-[#00a8cc] text-gray-700'
+                                  : 'bg-gray-50 border-gray-200 hover:border-[#00a8cc] text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200'
                               }`}>
                               <span className="block text-xs font-semibold">{slot.time}</span>
-                              <span className={`block text-[9px] mt-0.5 ${isPast ? 'text-gray-300' : isSel ? 'text-white/70' : 'text-gray-400'}`}>
+                              <span className={`block text-[9px] mt-0.5 ${isPast ? 'text-gray-300 dark:text-gray-600' : isSel ? 'text-white/70' : 'text-gray-400'}`}>
                                 {isPast ? 'Show ended' : slot.fmt}
                               </span>
                             </button>
@@ -599,7 +749,7 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
                   ))}
                 </div>
 
-                <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-[11px] text-amber-700">
+                <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-[11px] text-amber-700 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-400">
                   <p className="font-semibold">Please Note</p>
                   <p>Tickets required for all admissions. No entry for children under 2.5 feet.</p>
                 </div>
@@ -608,14 +758,14 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
           </div>
 
           {/* Step 2 */}
-          <div className={`bg-white rounded-xl border overflow-hidden shadow-sm transition-all ${selectedSlot ? 'border-gray-200' : 'border-gray-200/50 opacity-60'}`}>
+          <div className={`bg-white rounded-xl border overflow-hidden shadow-sm transition-all dark:bg-gray-900 ${selectedSlot ? 'border-gray-200 dark:border-gray-800' : 'border-gray-200/50 opacity-60'}`}>
             <div onClick={() => selectedSlot && setStep2Expanded(!step2Expanded)}
-              className={`p-4 bg-gray-50 flex items-center justify-between border-b border-gray-200 ${selectedSlot ? 'cursor-pointer hover:bg-gray-100 transition-colors' : 'cursor-not-allowed'}`}>
+              className={`p-4 bg-gray-50 flex items-center justify-between border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${selectedSlot ? 'cursor-pointer hover:bg-gray-100 transition-colors dark:hover:bg-gray-800/80' : 'cursor-not-allowed'}`}>
               <div className="flex items-center gap-2.5">
-                <span className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center shrink-0 ${selectedSlot ? 'bg-[#00a8cc] text-white' : 'bg-gray-200 text-gray-400'}`}>2</span>
-                <span className="text-sm font-semibold text-gray-900">Pick Seats</span>
-                {!selectedSlot && <span className="text-[11px] text-gray-400 ml-1">- select a showtime first</span>}
-                {selectedSlot && <span className="text-[11px] text-gray-500 ml-1">| {movie.title}</span>}
+                <span className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center shrink-0 ${selectedSlot ? 'bg-[#00a8cc] text-white' : 'bg-gray-200 text-gray-400 dark:bg-gray-700 dark:text-gray-400'}`}>2</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Pick Seats</span>
+                {!selectedSlot && <span className="text-[11px] text-gray-400 ml-1 dark:text-gray-500">- select a showtime first</span>}
+                {selectedSlot && <span className="text-[11px] text-gray-500 ml-1 dark:text-gray-400">| {movie.title}</span>}
               </div>
               {selectedSlot && (step2Expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />)}
             </div>
@@ -623,15 +773,15 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
             {step2Expanded && selectedSlot && (
               <div className="p-6 space-y-6">
                 {holdError && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 flex items-center gap-2">
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 flex items-center gap-2 dark:bg-rose-950/40 dark:border-rose-900 dark:text-rose-400">
                     <ShieldAlert className="w-4 h-4 shrink-0" /> {holdError}
                   </div>
                 )}
                 <SeatMap showtimeId={selectedSlot.showtimeId} movieTitle={movie.title} language={selectedSlot.language} />
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                   <div>
-                    <span className="text-xs text-gray-500 block">{selectedSeats.length} seat{selectedSeats.length !== 1 ? 's' : ''} selected</span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-xs text-gray-500 block dark:text-gray-400">{selectedSeats.length} seat{selectedSeats.length !== 1 ? 's' : ''} selected</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {selectedSeats.length > 0 ? selectedSeats.map(s => `${s.row}${s.number}`).join(', ') : 'None'}
                     </span>
                     {selectedSeats.length > 0 && (
@@ -656,12 +806,12 @@ const MovieShowtimes: React.FC<{ movieIdParam: string }> = ({ movieIdParam }) =>
       {/* Trailer modal */}
       {showTrailerModal && movie.trailerUrl && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTrailerModal(false)}>
-          <div className="w-full max-w-4xl bg-white rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+          <div className="w-full max-w-4xl bg-white rounded-2xl overflow-hidden dark:bg-gray-900" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-gray-100">
                 <Play className="w-4 h-4 text-[#00a8cc] fill-[#00a8cc]" /> {movie.title} - Trailer
               </h3>
-              <button onClick={() => setShowTrailerModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+              <button onClick={() => setShowTrailerModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors dark:hover:bg-gray-800 dark:text-gray-400">
                 <X className="w-5 h-5" />
               </button>
             </div>

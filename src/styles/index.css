@@ -1,8 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Netflix-style logo wordmark */
+  .font-logo {
+    font-family: 'Bebas Neue', 'Anton', 'Arial Narrow', sans-serif;
+    letter-spacing: 0.04em;
+  }
+}
 
 @layer base {
   html {
@@ -11,6 +20,9 @@
   body {
     @apply bg-gray-50 text-gray-900 selection:bg-[#00a8cc] selection:text-white;
     font-family: 'Poppins', sans-serif;
+  }
+  .dark body {
+    @apply bg-gray-950 text-gray-100 selection:bg-[#00a8cc] selection:text-white;
   }
 }
 
@@ -49,12 +61,20 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
+.dark .qfx-panel {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 .qfx-nav {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.dark .qfx-nav {
+  background: rgba(3, 7, 18, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .qfx-cyan-btn {
@@ -84,6 +104,10 @@
   top: 50%;
   transform: translateY(-50%);
 }
+.dark .ticket-perforated::before,
+.dark .ticket-perforated::after {
+  background: #0b0f19;
+}
 .ticket-perforated::before { left: -10px; }
 .ticket-perforated::after  { right: -10px; }
 
@@ -94,6 +118,10 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
+.dark .glass-panel {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 .glass-nav {
   background: rgba(255, 255, 255, 0.95);
@@ -101,14 +129,24 @@
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+.dark .glass-nav {
+  background: rgba(3, 7, 18, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 /* Shimmer loading animation */
 @keyframes shimmer {
-  0%   { opacity: 0.6; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.6; }
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
-.shimmer {
-  background: #e5e7eb;
-  animation: shimmer 1.5s infinite linear;
+.shimmer,
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite ease-in-out;
+}
+.dark .shimmer,
+.dark .skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
 }

@@ -36,6 +36,12 @@ export const useAuthStore = create<AuthState>()(
         useSeatStore.getState().clearSelection();
         queryClient.clear();
         set({ user: null, accessToken: null });
+        // Clear the per-user offline ticket cache so a fresh login never shows
+        // the previous account's cached bookings. Dynamic import avoids a
+        // circular dependency (useBookings -> useAuthStore -> useBookings).
+        import('../booking/useBookings').then(({ clearUserBookingsFromLocalStorage }) => {
+          clearUserBookingsFromLocalStorage();
+        });
       },
     }),
     {

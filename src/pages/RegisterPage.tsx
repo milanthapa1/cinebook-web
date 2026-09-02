@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Phone, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../features/auth/useAuthStore';
 import { signInWithGoogle } from '../lib/googleAuth';
+import { API_BASE_URL } from '../lib/config';
 
 /** Google "G" logo SVG - used on the OAuth button */
 const GoogleIcon = () => (
@@ -32,7 +33,7 @@ export const RegisterPage: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || '/api/v1'}/auth/register`, {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -57,18 +58,16 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[78vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6">
+    <div className="min-h-[78vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-50 dark:bg-gray-950">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6 dark:bg-gray-900 dark:border-gray-800">
         
         {/* Header Branding */}
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2 group">
-            <span className="text-2xl font-black tracking-tight text-[#00a8cc] group-hover:opacity-80 transition-opacity">
-              CINEBOOK
-            </span>
+          <Link to="/" className="inline-flex items-center group">
+            <span className="font-logo text-3xl font-normal text-[#00a8cc] leading-none">CINEBOOK</span>
           </Link>
-          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Create your account</h1>
-          <p className="text-xs text-gray-600">Join CineBook to enjoy fast ticket reservations &amp; seat locks</p>
+          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight dark:text-gray-100">Create your account</h1>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Join CineBook to enjoy fast ticket reservations &amp; seat locks</p>
         </div>
 
         {/* Error Alert */}
@@ -85,7 +84,7 @@ export const RegisterPage: React.FC = () => {
           id="google-signup-btn"
           onClick={handleGoogleRegister}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-semibold text-sm border border-gray-200 shadow-sm transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-semibold text-sm border border-gray-200 shadow-sm transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 dark:border-gray-700"
         >
           <GoogleIcon />
           <span>Sign up with Google</span>
@@ -93,9 +92,9 @@ export const RegisterPage: React.FC = () => {
 
         {/* Divider */}
         <div className="relative flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400 font-medium">or register with email</span>
-          <div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+          <span className="text-xs text-gray-400 font-medium dark:text-gray-500">or register with email</span>
+          <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
         </div>
 
         {/* Form */}
@@ -103,7 +102,7 @@ export const RegisterPage: React.FC = () => {
 
           {/* Full Name */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Full Name</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Full Name</label>
             <div className="relative">
               <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -112,14 +111,14 @@ export const RegisterPage: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Email */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Email Address</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Email Address</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -128,14 +127,14 @@ export const RegisterPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@example.com"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Phone */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Phone Number (Optional)</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Phone Number (Optional)</label>
             <div className="relative">
               <Phone className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -143,14 +142,14 @@ export const RegisterPage: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+977-9800000000"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Password with Eye Toggle */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Password</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -159,12 +158,12 @@ export const RegisterPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-300"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -183,7 +182,7 @@ export const RegisterPage: React.FC = () => {
         </form>
 
         {/* Sign In Link */}
-        <p className="text-center text-xs text-gray-600 pt-2 border-t border-gray-200">
+        <p className="text-center text-xs text-gray-600 pt-2 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700">
           Already have an account?{' '}
           <Link to="/login" className="text-[#00a8cc] font-bold hover:underline">
             Sign in here

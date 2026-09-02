@@ -4,17 +4,17 @@ export const TermsPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-16">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
           Terms of Service
         </h1>
-        <p className="mt-3 text-sm text-gray-500">
+        <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
           Last updated: July 31, 2026
         </p>
       </div>
 
-      <div className="space-y-10 text-gray-700 leading-7">
+      <div className="space-y-10 text-gray-700 leading-7 dark:text-gray-300">
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3 dark:text-gray-100">
             1. Ticket Booking & Lock Policy
           </h2>
           <p>
@@ -26,7 +26,7 @@ export const TermsPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3 dark:text-gray-100">
             2. Payments & Gateway Verification
           </h2>
           <p>
@@ -35,7 +35,7 @@ export const TermsPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3 dark:text-gray-100">
             3. Cancellations & Refunds
           </h2>
           <p>
@@ -46,7 +46,7 @@ export const TermsPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3 dark:text-gray-100">
             4. Admission & Age Ratings
           </h2>
           <p>

@@ -48,8 +48,8 @@ export const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-100 dark:bg-gray-950">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6 dark:bg-gray-900 dark:border-gray-800">
 
         {/* Header Branding */}
         <div className="text-center space-y-2">
@@ -57,17 +57,15 @@ export const AdminLoginPage: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-[#00a8cc] flex items-center justify-center">
               <ShieldCheck className="w-4 h-4 text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-[#00a8cc] group-hover:opacity-80 transition-opacity">
-              CINEBOOK
-            </span>
+            <span className="font-logo text-3xl font-normal text-[#00a8cc] leading-none">CINEBOOK</span>
           </Link>
-          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Admin Sign In</h1>
-          <p className="text-xs text-gray-600">Restricted access · cinema staff only</p>
+          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight dark:text-gray-100">Admin Sign In</h1>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Restricted access · cinema staff only</p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-2.5 text-xs text-rose-600">
+          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-2.5 text-xs text-rose-600 dark:text-rose-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -78,7 +76,7 @@ export const AdminLoginPage: React.FC = () => {
 
           {/* Email Input */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Admin Email</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Admin Email</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -87,14 +85,14 @@ export const AdminLoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@cinebook.com"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Password Input with Eye Toggle */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Password</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -103,12 +101,12 @@ export const AdminLoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-300"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -127,7 +125,7 @@ export const AdminLoginPage: React.FC = () => {
         </form>
 
         {/* Back to customer sign in */}
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-gray-600 dark:text-gray-400">
           Not an admin?{' '}
           <Link to="/login" className="text-[#00a8cc] font-bold hover:underline">
             Customer sign in

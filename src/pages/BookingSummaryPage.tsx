@@ -12,7 +12,7 @@ export const BookingSummaryPage: React.FC = () => {
   const showTime  = searchParams.get('time') || '';
   const navigate = useNavigate();
 
-  const { selectedSeats, showtimeId: heldShowtimeId } = useSeatStore();
+  const { selectedSeats, showtimeId: heldShowtimeId, expiresAt } = useSeatStore();
   const createBookingMutation = useCreateBooking();
 
   // Only trust seats that belong to the showtime being checked out (persisted
@@ -32,6 +32,12 @@ export const BookingSummaryPage: React.FC = () => {
       setErrorMsg('Please select at least one seat before proceeding.');
       return;
     }
+    // Guard against an expired seat hold: the seats were locked for a limited
+    // window and may no longer be reserved, so refuse and send the user back.
+    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) {
+      setErrorMsg('Your seat hold has expired. Please go back and re-select your seats.');
+      return;
+    }
     setLoading(true);
     setErrorMsg('');
     try {
@@ -48,22 +54,22 @@ export const BookingSummaryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24">
+    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24 dark:bg-gray-950 dark:text-gray-100">
       {/* Breadcrumb Steps */}
-      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40">
+      <div className="bg-white border-b border-gray-200 py-3 px-4 sticky top-16 z-40 dark:bg-gray-900 dark:border-gray-800">
         <div className="max-w-4xl mx-auto flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
-          <button onClick={() => navigate(-1)} className="p-1 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 border border-gray-300 transition-colors">
+          <button onClick={() => navigate(-1)} className="p-1 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 border border-gray-300 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:border-gray-700">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-gray-500">Now Showing</span>
+          <span className="text-gray-500 dark:text-gray-400">Now Showing</span>
           <span className="text-[#00a8cc] border-b-2 border-[#00a8cc] pb-0.5">Checkout</span>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Booking Summary</h1>
-          <p className="text-xs text-gray-600 mt-1">Review your seat selection before proceeding to checkout</p>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight dark:text-gray-100">Booking Summary</h1>
+          <p className="text-xs text-gray-600 mt-1 dark:text-gray-400">Review your seat selection before proceeding to checkout</p>
         </div>
 
         {errorMsg && (
@@ -73,14 +79,14 @@ export const BookingSummaryPage: React.FC = () => {
         )}
 
         {/* Showtime & Seats Card */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5">
-          <div className="flex items-center gap-3 border-b border-gray-200 pb-5">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center gap-3 border-b border-gray-200 pb-5 dark:border-gray-700">
             <div className="w-11 h-11 rounded-xl bg-[#00a8cc]/15 text-[#00a8cc] flex items-center justify-center border border-[#00a8cc]/20 shrink-0">
               <Film className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-gray-900">{movieTitle}</h3>
-              <div className="flex flex-wrap items-center gap-2 mt-0.5 text-[11px] text-gray-600">
+              <h3 className="text-base font-extrabold text-gray-900 dark:text-gray-100">{movieTitle}</h3>
+              <div className="flex flex-wrap items-center gap-2 mt-0.5 text-[11px] text-gray-600 dark:text-gray-400">
                 {cinemaName && <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-[#00a8cc]" />{cinemaName}</span>}
                 {showTime && <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-gray-500" />{showTime}</span>}
               </div>
@@ -89,19 +95,19 @@ export const BookingSummaryPage: React.FC = () => {
 
           {/* Selected Seats */}
           <div>
-            <h4 className="text-[11px] font-extrabold text-gray-600 uppercase tracking-widest mb-3">Selected Seats</h4>
+            <h4 className="text-[11px] font-extrabold text-gray-600 uppercase tracking-widest mb-3 dark:text-gray-400">Selected Seats</h4>
             {seats.length === 0 ? (
-              <p className="text-xs text-gray-500 italic">No seats selected for this showtime.</p>
+              <p className="text-xs text-gray-500 italic dark:text-gray-400">No seats selected for this showtime.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {seats.map((seat) => (
-                  <div key={seat.id} className="p-3.5 bg-gray-100 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
-                    <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <div key={seat.id} className="p-3.5 bg-gray-100 rounded-xl border border-gray-200 flex justify-between items-center text-xs dark:bg-gray-800 dark:border-gray-700">
+                    <span className="font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
                       <Ticket className="w-3.5 h-3.5 text-[#00a8cc]" />
                       Seat {seat.row}{seat.number}
                       <span className="px-1.5 py-0.5 bg-[#00a8cc]/15 text-[#00a8cc] rounded text-[9px] font-bold uppercase">{seat.type}</span>
                     </span>
-                    <span className="font-extrabold text-gray-900">NPR {seat.price.toFixed(2)}</span>
+                    <span className="font-extrabold text-gray-900 dark:text-gray-100">NPR {seat.price.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
@@ -111,22 +117,22 @@ export const BookingSummaryPage: React.FC = () => {
 
 
         {/* Price Breakdown */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5">
-          <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest border-b border-gray-200 pb-4">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 dark:bg-gray-900 dark:border-gray-800">
+          <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest border-b border-gray-200 pb-4 dark:text-gray-100 dark:border-gray-700">
             Payment Summary
           </h3>
 
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-gray-600 dark:text-gray-400">
               <span>Ticket Base ({seats.length} seat{seats.length !== 1 ? 's' : ''})</span>
-              <span className="text-gray-900 font-semibold">NPR {seatsTotal.toFixed(2)}</span>
+              <span className="text-gray-900 font-semibold dark:text-gray-100">NPR {seatsTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-gray-600 dark:text-gray-400">
               <span>Govt. VAT (13%)</span>
-              <span className="text-gray-900 font-semibold">NPR {vatAmount.toFixed(2)}</span>
+              <span className="text-gray-900 font-semibold dark:text-gray-100">NPR {vatAmount.toFixed(2)}</span>
             </div>
-            <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
-              <span className="text-base font-extrabold text-gray-900">Grand Total</span>
+            <div className="border-t border-gray-200 pt-4 flex justify-between items-center dark:border-gray-700">
+              <span className="text-base font-extrabold text-gray-900 dark:text-gray-100">Grand Total</span>
               <span className="text-2xl font-black text-[#00a8cc]">NPR {grandTotal.toFixed(2)}</span>
             </div>
           </div>

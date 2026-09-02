@@ -30,49 +30,105 @@ export const HomePage: React.FC = () => {
   const comingSoon  = allMovies.filter((m) => !m.isShowing);
   const displayList = activeTab === 'NOW_SHOWING' ? nowShowing : comingSoon;
 
-  const next = useCallback(() => setCurrentSlide((p) => (p + 1) % heroMovies.length), [heroMovies.length]);
-  const prev = useCallback(() => setCurrentSlide((p) => (p - 1 + heroMovies.length) % heroMovies.length), [heroMovies.length]);
+  const next = useCallback(
+    () => setCurrentSlide((p) => (heroMovies.length ? (p + 1) % heroMovies.length : 0)),
+    [heroMovies.length],
+  );
+  const prev = useCallback(
+    () => setCurrentSlide((p) => (heroMovies.length ? (p - 1 + heroMovies.length) % heroMovies.length : 0)),
+    [heroMovies.length],
+  );
 
   useEffect(() => {
+    if (heroMovies.length === 0) return;
     const t = setInterval(next, 5000);
     return () => clearInterval(t);
-  }, [next]);
+  }, [next, heroMovies.length]);
+
+  const isLoading = apiMovies === undefined;
+
+  if (isLoading) {
+    return (
+    <div className="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+        {/* Hero skeleton */}
+      <div className="relative w-full overflow-hidden bg-black select-none" style={{ height: 'clamp(340px, 52vw, 560px)' }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 px-8 sm:px-14 pb-10 pt-16 space-y-4">
+            <div className="skeleton h-4 w-28 rounded bg-[#00a8cc]/30" />
+            <div className="skeleton h-12 w-96 max-w-full rounded bg-white/20" />
+            <div className="skeleton h-10 w-28 rounded bg-[#00a8cc]/40" />
+          </div>
+          {/* Dot indicators skeleton */}
+          <div className="absolute bottom-4 right-6 z-20 flex items-center gap-1.5">
+            <div className="skeleton w-6 h-1.5 rounded-full bg-white/20" />
+            <div className="skeleton w-1.5 h-1.5 rounded-full bg-white/10" />
+            <div className="skeleton w-1.5 h-1.5 rounded-full bg-white/10" />
+          </div>
+        </div>
+
+        {/* Movies section skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+          {/* Tab strip */}
+          <div className="flex items-center gap-8 border-b border-gray-200 dark:border-gray-800 pb-0 mb-8">
+            <div className="skeleton h-4 w-24 rounded mb-3" />
+            <div className="skeleton h-4 w-24 rounded mb-3" />
+          </div>
+          {/* Movie card grid skeleton */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 dark:bg-gray-900 dark:border-gray-800">
+                {/* Top bar */}
+                <div className="skeleton h-6 w-full rounded-none" />
+                {/* Poster */}
+                <div className="skeleton aspect-[2/3] w-full rounded-none" />
+                {/* Dashed line */}
+                <div className="border-t-2 border-dashed border-gray-200 dark:border-gray-700" />
+                {/* Footer */}
+                <div className="p-3 space-y-1.5 bg-gray-50 dark:bg-gray-800">
+                  <div className="skeleton h-3 w-3/4 mx-auto rounded" />
+                  <div className="skeleton h-2.5 w-1/2 mx-auto rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24">
+      <div className="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
 
       {/* ── Hero Slideshow ───────────────────────────────────────────────────── */}
-      <div className="relative w-full overflow-hidden bg-black select-none" style={{ height: 'clamp(340px, 52vw, 560px)' }}>
+      <div className="relative w-full overflow-hidden bg-black select-none" style={{ height: 'clamp(380px, 46vw, 500px)' }}>
 
         {/* Slides track */}
         <div
           className="flex h-full transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${currentSlide * 100}%)`, width: `${heroMovies.length * 100}%` }}
+          style={{ transform: `translateX(-${currentSlide * (100 / heroMovies.length)}%)`, width: `${heroMovies.length * 100}%` }}
         >
           {heroMovies.map((movie) => {
-            /* Use dedicated banner if uploaded, otherwise fall back to poster */
-            const bgImage = movie.bannerUrl || movie.posterUrl;
+            /* If bannerUrl exists it already has c_fill,w_1920,h_500 baked in from upload.
+               If falling back to posterUrl, inject a landscape crop transformation so it
+               doesn't look portrait/zoomed in the hero. */
+            const bgImage = movie.bannerUrl
+              ? movie.bannerUrl
+              : movie.posterUrl.includes('/upload/')
+                ? movie.posterUrl.replace('/upload/', '/upload/c_fill,w_1920,h_500,g_north/')
+                : movie.posterUrl;
             return (
               <div
                 key={movie.id}
                 className="relative h-full shrink-0"
-                style={{ width: '100%' }}
+                style={{ width: `calc(100% / ${heroMovies.length})` }}
               >
-                {/* Full-bleed background image */}
-                {movie.bannerUrl ? (
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${bgImage})` }}
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-black flex items-center justify-center">
-                    <img
-                      src={bgImage}
-                      alt={movie.title}
-                      className="max-w-full max-h-full object-contain"
-                    />
-                  </div>
-                )}
+                {/* Full-bleed background image — no zoom trick, no blur */}
+                <img
+                  src={bgImage}
+                  alt={movie.title}
+                  className="absolute inset-0 w-full h-full object-cover object-top"
+                />
 
                 {/* Left-side dark gradient for text legibility only - no full overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
@@ -136,16 +192,16 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* ── Movies section ───────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-10">
 
         {/* Tab strip */}
-        <div className="flex items-center gap-8 border-b border-gray-200 pb-0 mb-8">
+        <div className="flex items-center gap-8 border-b border-gray-200 pb-0 mb-8 dark:border-gray-800">
           <button
             onClick={() => setActiveTab('NOW_SHOWING')}
             className={`text-base font-semibold pb-3 transition-all relative ${
               activeTab === 'NOW_SHOWING'
                 ? 'text-[#00a8cc] border-b-2 border-[#00a8cc]'
-                : 'text-gray-500 hover:text-gray-800'
+                : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
             }`}
           >
             Now Showing
@@ -154,14 +210,14 @@ export const HomePage: React.FC = () => {
             </span>
           </button>
 
-          <span className="text-gray-200 text-lg pb-3">|</span>
+          <span className="text-gray-200 text-lg pb-3 dark:text-gray-700">|</span>
 
           <button
             onClick={() => setActiveTab('COMING_SOON')}
             className={`text-base font-semibold pb-3 flex items-center gap-1.5 transition-all relative ${
               activeTab === 'COMING_SOON'
                 ? 'text-amber-500 border-b-2 border-amber-500'
-                : 'text-gray-500 hover:text-gray-800'
+                : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
             }`}
           >
             <Clock className="w-4 h-4 text-amber-500" /> Coming Soon
@@ -181,7 +237,7 @@ export const HomePage: React.FC = () => {
                   ? navigate(`/showtimes?movieId=${movie.id}`)
                   : navigate(`/movies/${movie.id}`)
               }
-              className="group bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:border-[#00a8cc]/40 transition-all duration-300 flex flex-col hover:-translate-y-1 hover:shadow-lg"
+              className="group bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:border-[#00a8cc]/40 transition-all duration-300 flex flex-col hover:-translate-y-1 hover:shadow-lg dark:bg-gray-900 dark:border-gray-800"
             >
               {/* Top bar */}
               <div className="qfx-card-top-bar text-white text-[10px] font-semibold px-2.5 py-1.5 flex items-center justify-between">
@@ -194,7 +250,7 @@ export const HomePage: React.FC = () => {
               </div>
 
               {/* Poster */}
-              <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-200">
+              <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-200 dark:bg-gray-800">
                 <img
                   src={movie.posterUrl}
                   alt={movie.title}
@@ -226,11 +282,11 @@ export const HomePage: React.FC = () => {
               <div className="ticket-dashed-line" />
 
               {/* Footer */}
-              <div className="p-3 text-center bg-gray-50 space-y-0.5">
-                <h3 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-[#00a8cc] transition-colors truncate">
+              <div className="p-3 text-center bg-gray-50 space-y-0.5 dark:bg-gray-800">
+                <h3 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-[#00a8cc] transition-colors truncate dark:text-gray-100">
                   {movie.title}
                 </h3>
-                <p className="text-[10px] text-gray-500 truncate">
+                <p className="text-[10px] text-gray-500 truncate dark:text-gray-400">
                   {movie.language} &bull; {movie.genre.slice(0, 2).join(', ')}
                 </p>
               </div>

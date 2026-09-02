@@ -12,9 +12,9 @@ import {
   AdminLocation, AdminCinema,
 } from '../../features/admin/useAdmin';
 
-const inputCls = 'w-full bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl px-3 py-2.5 focus:outline-none transition-all';
+const inputCls = 'w-full bg-white border border-gray-200 focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/10 text-gray-900 text-xs rounded-xl px-3 py-2.5 focus:outline-none transition-all dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500';
 const Lbl: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-  <div><label className="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">{label}</label>{children}</div>
+  <div><label className="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 dark:text-gray-400">{label}</label>{children}</div>
 );
 
 // ─── Delete confirm modal ─────────────────────────────────────────────────────
@@ -23,20 +23,20 @@ const DeleteModal: React.FC<{
   onConfirm: () => void; onCancel: () => void;
 }> = ({ title, description, loading, onConfirm, onCancel }) => (
   <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-2xl dark:bg-gray-900 dark:border-gray-800">
       <div className="flex items-start gap-3">
         <div className="w-9 h-9 bg-rose-500/10 rounded-xl flex items-center justify-center shrink-0">
           <Trash2 className="w-4 h-4 text-rose-500" />
         </div>
-        <div><h3 className="text-sm font-bold text-gray-900">{title}</h3>
-          <p className="text-xs text-gray-600 mt-1">{description}</p></div>
+        <div><h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">{title}</h3>
+          <p className="text-xs text-gray-600 mt-1 dark:text-gray-400">{description}</p></div>
       </div>
       <div className="flex gap-3">
         <button onClick={onConfirm} disabled={loading}
           className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors">
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
         </button>
-        <button onClick={onCancel} className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors">Cancel</button>
+        <button onClick={onCancel} className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200">Cancel</button>
       </div>
     </div>
   </div>
@@ -64,12 +64,12 @@ const LocationForm: React.FC<{
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm shadow-2xl dark:bg-gray-900 dark:border-gray-800">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
             <MapPin className="w-4 h-4 text-[#00a8cc]" />{initial ? 'Edit Location' : 'Add Location'}
           </h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800 dark:text-gray-400"><X className="w-4 h-4" /></button>
         </div>
         <div className="p-5 space-y-4">
           {error && <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-xs text-rose-500">{error}</div>}
@@ -77,18 +77,18 @@ const LocationForm: React.FC<{
             <input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Kathmandu, Pokhara" />
           </Lbl>
           <button onClick={() => setIsActive(v => !v)}
-            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}>
+            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'}`}>
             {isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
             {isActive ? 'Active - visible to customers' : 'Inactive - hidden from customers'}
           </button>
         </div>
-        <div className="flex gap-3 px-5 py-4 border-t border-gray-200">
+        <div className="flex gap-3 px-5 py-4 border-t border-gray-200 dark:border-gray-800">
           <button onClick={submit} disabled={createMut.isPending || updateMut.isPending}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-extrabold text-xs rounded-xl disabled:opacity-60 transition-all">
             {(createMut.isPending || updateMut.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
             {initial ? 'Save Changes' : 'Add Location'}
           </button>
-          <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors">Cancel</button>
+          <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200">Cancel</button>
         </div>
       </div>
     </div>
@@ -123,13 +123,13 @@ const CinemaForm: React.FC<{
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-md shadow-2xl dark:bg-gray-900 dark:border-gray-800">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
             <Building2 className="w-4 h-4 text-[#00a8cc]" />
             {initial ? 'Edit Cinema' : `Add Cinema in ${locationName}`}
           </h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800 dark:text-gray-400"><X className="w-4 h-4" /></button>
         </div>
         <div className="p-5 space-y-3">
           {error && <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-xs text-rose-500">{error}</div>}
@@ -148,18 +148,18 @@ const CinemaForm: React.FC<{
             </Lbl>
           </div>
           <button onClick={() => set('isActive', !form.isActive)}
-            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${form.isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}>
+            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold transition-colors ${form.isActive ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600' : 'bg-gray-50 border-gray-300 text-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'}`}>
             {form.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
             {form.isActive ? 'Active - visible to customers' : 'Inactive - hidden from customers'}
           </button>
         </div>
-        <div className="flex gap-3 px-5 py-4 border-t border-gray-200">
+        <div className="flex gap-3 px-5 py-4 border-t border-gray-200 dark:border-gray-800">
           <button onClick={submit} disabled={createMut.isPending || updateMut.isPending}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#00a8cc] hover:bg-[#0096c7] text-white font-extrabold text-xs rounded-xl disabled:opacity-60 transition-all">
             {(createMut.isPending || updateMut.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
             {initial ? 'Save Changes' : 'Add Cinema'}
           </button>
-          <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors">Cancel</button>
+          <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200">Cancel</button>
         </div>
       </div>
     </div>
@@ -207,8 +207,33 @@ export const AdminLocationsPage: React.FC = () => {
 
   if (isLoading) return (
     <div className="space-y-4 max-w-4xl">
-      <div className="h-8 shimmer rounded-lg w-48" />
-      {[1,2,3].map(n => <div key={n} className="h-24 shimmer rounded-xl" />)}
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1.5">
+          <div className="skeleton h-6 w-48 rounded" />
+          <div className="skeleton h-3 w-56 rounded" />
+        </div>
+        <div className="skeleton h-9 w-28 rounded-xl" />
+      </div>
+      {/* Location cards */}
+      {[1,2,3].map(n => (
+        <div key={n} className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center gap-3 px-5 py-3.5">
+            <div className="skeleton w-2 h-2 rounded-full shrink-0" />
+            <div className="skeleton w-4 h-4 rounded shrink-0" />
+            <div className="flex-1 space-y-1">
+              <div className="skeleton h-3 w-32 rounded" />
+              <div className="skeleton h-2.5 w-20 rounded" />
+            </div>
+            <div className="flex gap-1.5">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="skeleton w-7 h-7 rounded-lg" />
+              ))}
+            </div>
+            <div className="skeleton w-4 h-4 rounded shrink-0" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 
@@ -217,10 +242,10 @@ export const AdminLocationsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Locations & Cinemas</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Manage cities · <span className="font-semibold text-gray-700">{locations?.length ?? 0}</span> locations ·{' '}
-            <span className="font-semibold text-gray-700">{locations?.reduce((s,l) => s + (l._count?.cinemas ?? 0), 0) ?? 0}</span> cinemas
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Locations & Cinemas</h1>
+          <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
+            Manage cities · <span className="font-semibold text-gray-700 dark:text-gray-300">{locations?.length ?? 0}</span> locations ·{' '}
+            <span className="font-semibold text-gray-700 dark:text-gray-300">{locations?.reduce((s,l) => s + (l._count?.cinemas ?? 0), 0) ?? 0}</span> cinemas
           </p>
         </div>
         <button onClick={() => setLocForm('new')}
@@ -233,11 +258,11 @@ export const AdminLocationsPage: React.FC = () => {
 
       {/* Unassigned halls banner */}
       {unassignedHalls.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs dark:bg-amber-900/40 dark:border-amber-800">
           <MonitorPlay className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold text-amber-600">{unassignedHalls.length} hall{unassignedHalls.length !== 1 ? 's' : ''} not assigned to any cinema</p>
-            <p className="text-gray-600 mt-0.5">
+            <p className="font-bold text-amber-600 dark:text-amber-300">{unassignedHalls.length} hall{unassignedHalls.length !== 1 ? 's' : ''} not assigned to any cinema</p>
+            <p className="text-gray-600 mt-0.5 dark:text-gray-400">
               {unassignedHalls.map(h => h.name).join(', ')} - expand a cinema below to assign them.
             </p>
           </div>
@@ -247,25 +272,25 @@ export const AdminLocationsPage: React.FC = () => {
       {/* Locations list */}
       <div className="space-y-3">
         {locations?.length === 0 && (
-          <div className="bg-white border border-gray-200 rounded-2xl py-14 text-center">
+          <div className="bg-white border border-gray-200 rounded-2xl py-14 text-center dark:bg-gray-900 dark:border-gray-800">
             <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-gray-600">No locations yet</p>
-            <p className="text-xs text-gray-500 mt-1">Add your first city to get started</p>
+            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">No locations yet</p>
+            <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">Add your first city to get started</p>
           </div>
         )}
 
         {locations?.map(loc => {
           const expanded = expandedLocs.has(loc.id);
           return (
-            <div key={loc.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div key={loc.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden dark:bg-gray-900 dark:border-gray-800">
               {/* Location header */}
-              <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors"
+              <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors dark:hover:bg-gray-800/50"
                 onClick={() => toggleExpand(loc.id)}>
                 <div className={`w-2 h-2 rounded-full shrink-0 ${loc.isActive ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                 <MapPin className="w-4 h-4 text-[#00a8cc] shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm font-bold text-gray-900">{loc.name}</span>
-                  <span className="ml-2 text-xs text-gray-500">
+                  <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{loc.name}</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                     {loc._count?.cinemas ?? 0} cinema{(loc._count?.cinemas ?? 0) !== 1 ? 's' : ''}
                     {!loc.isActive && <span className="ml-2 text-amber-500 font-bold">· Inactive</span>}
                   </span>
@@ -278,11 +303,11 @@ export const AdminLocationsPage: React.FC = () => {
                   </button>
                   {/* Toggle active */}
                   <button onClick={() => toggleLocationActive(loc)} title={loc.isActive ? 'Deactivate' : 'Activate'}
-                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-400">
                     {loc.isActive ? <ToggleRight className="w-3.5 h-3.5 text-emerald-500" /> : <ToggleLeft className="w-3.5 h-3.5" />}
                   </button>
                   {/* Edit */}
-                  <button onClick={() => setLocForm(loc)} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                  <button onClick={() => setLocForm(loc)} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-400">
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   {/* Delete */}
@@ -296,25 +321,25 @@ export const AdminLocationsPage: React.FC = () => {
 
               {/* Cinemas list */}
               {expanded && (
-                <div className="border-t border-gray-200 divide-y divide-gray-100">
+                <div className="border-t border-gray-200 divide-y divide-gray-100 dark:border-gray-800 dark:divide-gray-800">
                   {loc.cinemas?.length === 0 && (
-                    <div className="px-8 py-6 text-xs text-gray-500 text-center">
+                    <div className="px-8 py-6 text-xs text-gray-500 text-center dark:text-gray-400">
                       No cinemas in {loc.name} yet.{' '}
                       <button onClick={() => setCinForm({ locationId: loc.id, locationName: loc.name })} className="text-[#00a8cc] hover:underline font-bold">Add one</button>
                     </div>
                   )}
                   {loc.cinemas?.map(cin => (
-                    <div key={cin.id} className="px-6 py-3.5 bg-gray-50/60">
+                    <div key={cin.id} className="px-6 py-3.5 bg-gray-50/60 dark:bg-gray-800/30">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3 min-w-0">
                           <div className={`w-1.5 h-1.5 rounded-full mt-2 shrink-0 ${cin.isActive ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                           <Building2 className="w-4 h-4 text-[#00a8cc] shrink-0 mt-0.5" />
                           <div className="min-w-0">
-                            <p className="text-sm font-bold text-gray-900 truncate">{cin.name}
+                            <p className="text-sm font-bold text-gray-900 truncate dark:text-gray-100">{cin.name}
                               {!cin.isActive && <span className="ml-2 text-[10px] text-amber-500 font-bold">Inactive</span>}
                             </p>
-                            {cin.address && <p className="text-[11px] text-gray-500 truncate mt-0.5">{cin.address}</p>}
-                            <div className="flex flex-wrap gap-3 mt-1.5 text-[11px] text-gray-500">
+                            {cin.address && <p className="text-[11px] text-gray-500 truncate mt-0.5 dark:text-gray-400">{cin.address}</p>}
+                            <div className="flex flex-wrap gap-3 mt-1.5 text-[11px] text-gray-500 dark:text-gray-400">
                               {cin.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{cin.phone}</span>}
                               {cin.mapUrl && <a href={cin.mapUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[#00a8cc] hover:underline"><Globe className="w-3 h-3" />Map</a>}
                               <span className="flex items-center gap-1"><MonitorPlay className="w-3 h-3" />{cin._count?.halls ?? 0} hall{(cin._count?.halls ?? 0) !== 1 ? 's' : ''}</span>
@@ -336,7 +361,7 @@ export const AdminLocationsPage: React.FC = () => {
                                 {unassignedHalls.map(h => (
                                   <button key={h.id} onClick={() => assignHall.mutate({ hallId: h.id, cinemaId: cin.id })}
                                     title={`Assign "${h.name}" to this cinema`}
-                                    className="px-2 py-0.5 bg-white border border-dashed border-gray-300 hover:border-[#00a8cc] text-gray-500 hover:text-[#00a8cc] rounded text-[10px] font-bold transition-colors">
+                                    className="px-2 py-0.5 bg-white border border-dashed border-gray-300 hover:border-[#00a8cc] text-gray-500 hover:text-[#00a8cc] rounded text-[10px] font-bold transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400">
                                     + {h.name}
                                   </button>
                                 ))}
@@ -346,11 +371,11 @@ export const AdminLocationsPage: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <button onClick={() => updateCin.mutateAsync({ id: cin.id, isActive: !cin.isActive })} title={cin.isActive ? 'Deactivate' : 'Activate'}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-400">
                             {cin.isActive ? <ToggleRight className="w-3.5 h-3.5 text-emerald-500" /> : <ToggleLeft className="w-3.5 h-3.5" />}
                           </button>
                           <button onClick={() => setCinForm({ cinema: cin, locationId: loc.id, locationName: loc.name })}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-400">
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button onClick={() => setConfirmDel({ type: 'cinema', item: cin })}

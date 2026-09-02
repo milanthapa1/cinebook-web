@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../../lib/apiClient';
+import { useAuthStore } from '../auth/useAuthStore';
 
 export interface Booking {
   id: string;
@@ -42,10 +43,35 @@ export interface Booking {
 
 const LOCAL_STORAGE_KEY = 'cinebook_user_bookings';
 
+// Namespace the offline ticket cache per user so one account's bookings can
+// never leak into another account's browser, and so logging out/in never shows
+// a previous user's cached tickets.
+function bookingStorageKey(): string {
+  try {
+    const userId = useAuthStore.getState().user?.id;
+    return userId ? `${LOCAL_STORAGE_KEY}_${userId}` : LOCAL_STORAGE_KEY;
+  } catch {
+    return LOCAL_STORAGE_KEY;
+  }
+}
+
+export function clearUserBookingsFromLocalStorage(): void {
+  try {
+    const key = bookingStorageKey();
+    if (key !== LOCAL_STORAGE_KEY) {
+      localStorage.removeItem(key);
+    }
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
 function saveBookingToLocalStorage(booking: Booking) {
   try {
     if (!booking || !booking.id) return;
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const key = bookingStorageKey();
+    const raw = localStorage.getItem(key);
     const bookings: Booking[] = raw ? JSON.parse(raw) : [];
     const idx = bookings.findIndex((b) => b.id === booking.id);
     if (idx !== -1) {
@@ -53,7 +79,7 @@ function saveBookingToLocalStorage(booking: Booking) {
     } else {
       bookings.unshift(booking);
     }
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(bookings));
+    localStorage.setItem(key, JSON.stringify(bookings));
   } catch (e) {
     // Ignore localStorage errors
   }
@@ -61,7 +87,7 @@ function saveBookingToLocalStorage(booking: Booking) {
 
 function getBookingFromLocalStorage(id: string): Booking | null {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = localStorage.getItem(bookingStorageKey());
     if (!raw) return null;
     const bookings: Booking[] = JSON.parse(raw);
     return bookings.find((b) => b.id === id) || null;
@@ -72,7 +98,7 @@ function getBookingFromLocalStorage(id: string): Booking | null {
 
 function getUserBookingsFromLocalStorage(): Booking[] {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = localStorage.getItem(bookingStorageKey());
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
     return [];

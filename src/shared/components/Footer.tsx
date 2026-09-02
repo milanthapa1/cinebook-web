@@ -4,14 +4,14 @@ import { MapPin, Mail, Phone } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-white dark:bg-cinema-darkBg border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 mt-20 text-xs">
+    <footer className="bg-white dark:bg-cinema-darkBg border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
           {/* Brand */}
           <div className="space-y-3">
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-[#00a8cc]">CINEBOOK</span>
+              <span className="font-logo text-2xl font-normal text-[#00a8cc] leading-none">CINEBOOK</span>
               <span className="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-semibold border-l border-gray-200 dark:border-gray-700 pl-2">cinemas</span>
             </Link>
             <p className="text-xs leading-relaxed text-gray-400 dark:text-gray-500">
@@ -74,7 +74,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <p className="text-center text-gray-400 dark:text-gray-500 mt-3">
-          Developed by <a href="https://www.milanthapa1.com.np/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#00a8cc] transition-colors">Milan Thapa</a>.
+          Developed by <a href="https://www.milanthapa1.com.np/" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-[#00a8cc] transition-colors dark:text-white">Milan Thapa</a>.
         </p>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { apiClient } from '../lib/apiClient';
 import { useAuthStore } from '../features/auth/useAuthStore';
+import { takeGoogleReturnPath } from '../lib/googleAuth';
 
 /**
  * Landing page reached after the server-side Google OAuth success redirect.
@@ -40,7 +41,7 @@ export const GoogleCallbackPage: React.FC = () => {
         if (!user) throw new Error('Could not load your profile');
 
         setAuth(user, accessToken);
-        navigate('/', { replace: true });
+        navigate(takeGoogleReturnPath() || '/', { replace: true });
       } catch (err: any) {
         setError(
           err?.response?.data?.message ||
@@ -52,15 +53,15 @@ export const GoogleCallbackPage: React.FC = () => {
   }, [searchParams, navigate, setAuth, setAccessToken]);
 
   return (
-    <div className="min-h-[78vh] flex items-center justify-center px-4 py-12 bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl text-center space-y-4">
+    <div className="min-h-[78vh] flex items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-950">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl text-center space-y-4 dark:bg-gray-900 dark:border-gray-800">
         {error ? (
           <>
             <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight dark:text-gray-100">
               Could not sign in with Google
             </h1>
-            <p className="text-xs text-gray-600">{error}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">{error}</p>
             <Link
               to="/login"
               className="inline-block mt-2 w-full py-3 rounded-xl bg-[#00a8cc] hover:bg-[#0096c7] text-white font-extrabold text-xs uppercase tracking-wider transition-all"
@@ -71,10 +72,10 @@ export const GoogleCallbackPage: React.FC = () => {
         ) : (
           <>
             <Loader2 className="w-12 h-12 text-[#00a8cc] animate-spin mx-auto" />
-            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight dark:text-gray-100">
               Signing you in...
             </h1>
-            <p className="text-xs text-gray-600">Completing your Google sign-in</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Completing your Google sign-in</p>
           </>
         )}
       </div>

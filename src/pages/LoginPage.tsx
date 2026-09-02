@@ -54,7 +54,7 @@ export const LoginPage: React.FC = () => {
   const handleGoogleLogin = () => {
     // Redirect to the backend, which performs the full server-side Google
     // OAuth exchange and redirects back to /google/callback.
-    signInWithGoogle();
+    signInWithGoogle(from);
   };
 
   const handleDemoLogin = () => {
@@ -63,23 +63,21 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[78vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6">
+    <div className="min-h-[78vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-gray-50 dark:bg-gray-950">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-2xl space-y-6 dark:bg-gray-900 dark:border-gray-800">
         
         {/* Header Branding */}
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2 group">
-            <span className="text-2xl font-black tracking-tight text-[#00a8cc] group-hover:opacity-80 transition-opacity">
-              CINEBOOK
-            </span>
+          <Link to="/" className="inline-flex items-center group">
+            <span className="font-logo text-3xl font-normal text-[#00a8cc] leading-none">CINEBOOK</span>
           </Link>
-          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Sign in to your account</h1>
-          <p className="text-xs text-gray-600">Access your cinema tickets, seat reservations, and profile</p>
+          <h1 className="text-xl font-extrabold text-gray-900 tracking-tight dark:text-gray-100">Sign in to your account</h1>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Access your cinema tickets, seat reservations, and profile</p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-2.5 text-xs text-rose-600">
+          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-2.5 text-xs text-rose-600 dark:text-rose-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -91,7 +89,7 @@ export const LoginPage: React.FC = () => {
           id="google-signin-btn"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-semibold text-sm border border-gray-200 shadow-sm transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-semibold text-sm border border-gray-200 shadow-sm transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 dark:border-gray-700"
         >
           <GoogleIcon />
           <span>Continue with Google</span>
@@ -99,9 +97,9 @@ export const LoginPage: React.FC = () => {
 
         {/* Divider */}
         <div className="relative flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="text-xs text-gray-500 font-medium">or sign in with email</span>
-          <div className="flex-1 h-px bg-gray-300" />
+          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
+          <span className="text-xs text-gray-500 font-medium dark:text-gray-400">or sign in with email</span>
+          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
         </div>
 
         {/* Form */}
@@ -109,7 +107,7 @@ export const LoginPage: React.FC = () => {
           
           {/* Email Input */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700">Email Address</label>
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Email Address</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
@@ -118,7 +116,7 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@example.com"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -126,7 +124,7 @@ export const LoginPage: React.FC = () => {
           {/* Password Input with Eye Toggle */}
           <div className="space-y-1.5">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-bold text-gray-700">Password</label>
+              <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Password</label>
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
@@ -136,13 +134,12 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors"
+                className="w-full bg-gray-50 border border-gray-300/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00a8cc] transition-colors dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder:text-gray-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
-                title={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-300"                title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -160,18 +157,18 @@ export const LoginPage: React.FC = () => {
         </form>
 
         {/* Demo Credentials Quick Fill */}
-        <div className="pt-2 border-t border-gray-200">
+        <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
           <button
             onClick={handleDemoLogin}
             type="button"
-            className="w-full py-2.5 px-3 bg-gray-50 hover:bg-gray-100 text-[#00a8cc] border border-gray-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+            className="w-full py-2.5 px-3 bg-gray-50 hover:bg-gray-100 text-[#00a8cc] border border-gray-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700"
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-[#00a8cc]" /> Fill Demo Account (demo@cinebook.com)
           </button>
         </div>
 
         {/* Sign Up Link */}
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-gray-600 dark:text-gray-400">
           Don't have an account?{' '}
           <Link to="/register" className="text-[#00a8cc] font-bold hover:underline">
             Create an account
@@ -179,9 +176,9 @@ export const LoginPage: React.FC = () => {
         </p>
 
         {/* Admin Sign In Link */}
-        <p className="text-center text-[11px] text-gray-400">
+        <p className="text-center text-[11px] text-gray-400 dark:text-gray-500">
           Cinema staff?{' '}
-          <Link to="/admin/login" className="text-gray-600 font-semibold hover:text-[#00a8cc] hover:underline">
+          <Link to="/admin/login" className="text-gray-600 font-semibold hover:text-[#00a8cc] hover:underline dark:text-gray-400">
             Admin sign in
           </Link>
         </p>

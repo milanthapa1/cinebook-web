@@ -8,7 +8,6 @@ import { HomePage } from './pages/HomePage';
 import { MoviesPage } from './pages/MoviesPage';
 import { MovieDetailsPage } from './pages/MovieDetailsPage';
 import { ShowtimesPage } from './pages/ShowtimesPage';
-import { SeatSelectionPage } from './pages/SeatSelectionPage';
 import { BookingSummaryPage } from './pages/BookingSummaryPage';
 import { PaymentPage } from './pages/PaymentPage';
 import { TicketConfirmationPage } from './pages/TicketConfirmationPage';
@@ -40,7 +39,7 @@ const PublicLayout: React.FC = () => (
   <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col selection:bg-[#00a8cc] selection:text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
     <Navbar />
     <CitySelectModal />
-    <main className="flex-1">
+    <main>
       <Outlet />
     </main>
     <Footer />
@@ -73,7 +72,6 @@ export const App: React.FC = () => {
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/movies/:id" element={<MovieDetailsPage />} />
         <Route path="/showtimes" element={<ShowtimesPage />} />
-        <Route path="/seats/:showtimeId" element={<SeatSelectionPage />} />
         <Route path="/booking-summary" element={<BookingSummaryPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ticket-confirmation/:bookingId" element={<TicketConfirmationPage />} />

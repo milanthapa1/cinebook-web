@@ -20,8 +20,55 @@ export const TicketConfirmationPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-20">
-        <div className="h-96 shimmer rounded-2xl" />
+      <div className="max-w-2xl mx-auto px-4 py-20 space-y-8">
+        {/* Success banner skeleton */}
+        <div className="bg-white border border-gray-200 p-6 rounded-2xl text-center space-y-3">
+          <div className="skeleton w-14 h-14 rounded-full mx-auto bg-emerald-100" />
+          <div className="skeleton h-7 w-48 rounded mx-auto" />
+          <div className="skeleton h-3 w-64 rounded mx-auto" />
+        </div>
+
+        {/* E-ticket card skeleton */}
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-2xl">
+          {/* Ticket header */}
+          <div className="skeleton h-20 w-full rounded-none" />
+
+          {/* Ticket body */}
+          <div className="p-6 sm:p-8 space-y-6">
+            {/* Movie + QR row */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-between items-start">
+              <div className="space-y-2.5 flex-1">
+                <div className="skeleton h-7 w-48 rounded" />
+                <div className="flex items-center gap-3">
+                  <div className="skeleton h-3 w-24 rounded" />
+                  <div className="skeleton h-3 w-32 rounded" />
+                </div>
+              </div>
+              {/* QR */}
+              <div className="skeleton w-24 h-28 rounded-xl shrink-0" />
+            </div>
+
+            {/* Dashed divider */}
+            <div className="border-t-2 border-dashed border-gray-200 my-2" />
+
+            {/* Info grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="skeleton h-16 rounded-xl" />
+              <div className="skeleton h-16 rounded-xl" />
+              <div className="skeleton h-16 rounded-xl" />
+            </div>
+
+            {/* Advisory */}
+            <div className="skeleton h-16 w-full rounded-xl" />
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="skeleton h-12 flex-1 rounded-xl" />
+          <div className="skeleton h-12 flex-1 rounded-xl" />
+          <div className="skeleton h-12 flex-1 rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -29,7 +76,7 @@ export const TicketConfirmationPage: React.FC = () => {
   if (!booking) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Ticket Not Found</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Ticket Not Found</h2>
         <Link to="/" className="text-[#00a8cc] font-semibold hover:underline text-sm">
           Return to Home
         </Link>
@@ -40,29 +87,29 @@ export const TicketConfirmationPage: React.FC = () => {
 
   return (
 
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-24 dark:bg-gray-950">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-8 print:p-4">
 
         {/* Success Banner */}
-        <div className="bg-white border border-emerald-500/30 p-6 rounded-2xl text-center space-y-3 print:hidden">
+        <div className="bg-white border border-emerald-500/30 p-6 rounded-2xl text-center space-y-3 print:hidden dark:bg-gray-900">
           <div className="w-14 h-14 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
             <CheckCircle2 className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-black text-gray-900">Payment Confirmed!</h1>
-          <p className="text-xs text-gray-700 max-w-sm mx-auto">
+          <h1 className="text-2xl font-black text-gray-900 dark:text-gray-100">Payment Confirmed!</h1>
+          <p className="text-xs text-gray-700 max-w-sm mx-auto dark:text-gray-400">
             Your seats have been permanently reserved. Show the QR code below at the cinema entrance.
           </p>
         </div>
 
         {/* ── E-Ticket Card ── */}
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-2xl print:border-black">
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-2xl print:border-black dark:bg-gray-900 dark:border-gray-800">
 
           {/* Ticket Header */}
           <div className="qfx-card-top-bar px-6 py-5 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <Film className="w-6 h-6 text-gray-900" />
               <div>
-                <span className="text-base font-black text-gray-900 tracking-wider uppercase">CINEBOOK</span>
+                <span className="font-logo text-xl font-normal text-gray-900 uppercase leading-none">CINEBOOK</span>
                 <span className="block text-[10px] font-semibold text-gray-900/80 uppercase tracking-widest">Admit One · Official E-Ticket</span>
               </div>
             </div>
@@ -77,10 +124,10 @@ export const TicketConfirmationPage: React.FC = () => {
             {/* Movie + QR Row */}
             <div className="flex flex-col sm:flex-row gap-6 justify-between items-start">
               <div className="space-y-2.5">
-                <h2 className="text-2xl font-black text-gray-900">
+                <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100">
                   {booking.showtime?.movie?.title ?? 'Cinema Movie'}
                 </h2>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-700 font-semibold">
+                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-700 font-semibold dark:text-gray-300">
                   <span className="flex items-center gap-1 text-[#00a8cc]">
                     <MapPin className="w-3.5 h-3.5" />
                     {booking.showtime?.hall?.name ?? 'Cinema'}
@@ -99,9 +146,9 @@ export const TicketConfirmationPage: React.FC = () => {
               </div>
 
               {/* QR Code */}
-              <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-200 shrink-0">
+              <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-200 shrink-0 dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                 <QRCodeSVG value={booking.qrPayload || booking.id} size={96} level="H" />
-                <span className="block text-[9px] text-center text-gray-500 font-mono font-semibold mt-1.5">
+                <span className="block text-[9px] text-center text-gray-500 font-mono font-semibold mt-1.5 dark:text-gray-400">
                   REF #{booking.id.slice(-6).toUpperCase()}
                 </span>
               </div>
@@ -112,25 +159,25 @@ export const TicketConfirmationPage: React.FC = () => {
 
             {/* Info Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200">
-                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1">Seats</span>
-                <span className="text-sm font-extrabold text-gray-900">
+              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1 dark:text-gray-400">Seats</span>
+                <span className="text-sm font-extrabold text-gray-900 dark:text-gray-100">
                   {booking.seats.map(parseSeatLabel).join(', ') || '-'}
                 </span>
               </div>
-              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200">
-                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1">Total Paid</span>
+              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1 dark:text-gray-400">Total Paid</span>
                 <span className="text-sm font-extrabold text-[#00a8cc]">NPR {Number(booking.totalAmount).toFixed(2)}</span>
               </div>
-              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200">
-                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1">Booking ID</span>
-                <span className="text-sm font-extrabold text-gray-900 font-mono">{booking.id.slice(-8).toUpperCase()}</span>
+              <div className="bg-gray-100 p-3.5 rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <span className="block text-gray-500 font-bold uppercase text-[10px] mb-1 dark:text-gray-400">Booking ID</span>
+                <span className="text-sm font-extrabold text-gray-900 font-mono dark:text-gray-100">{booking.id.slice(-8).toUpperCase()}</span>
               </div>
             </div>
 
             {/* Advisory */}
-            <div className="p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[11px] text-gray-600 space-y-1">
-              <p className="font-semibold text-gray-800">Entry Instructions</p>
+            <div className="p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[11px] text-gray-600 space-y-1 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+              <p className="font-semibold text-gray-800 dark:text-gray-200">Entry Instructions</p>
               <p>Please arrive 15 minutes before showtime. Outside food &amp; beverages are not allowed. Show this QR code or booking ID at the counter.</p>
             </div>
           </div>
@@ -140,7 +187,7 @@ export const TicketConfirmationPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-3 print:hidden">
           <button
             onClick={() => window.print()}
-            className="flex-1 px-5 py-3 rounded-xl bg-white hover:bg-gray-200 text-gray-900 font-semibold text-xs transition-all flex items-center justify-center gap-2 border border-gray-200"
+            className="flex-1 px-5 py-3 rounded-xl bg-white hover:bg-gray-200 text-gray-900 font-semibold text-xs transition-all flex items-center justify-center gap-2 border border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-700"
           >
             <Printer className="w-4 h-4 text-[#00a8cc]" /> Print / Save PDF
           </button>
@@ -152,7 +199,7 @@ export const TicketConfirmationPage: React.FC = () => {
           </Link>
           <Link
             to="/"
-            className="flex-1 px-5 py-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs transition-all flex items-center justify-center gap-2 border border-gray-200"
+            className="flex-1 px-5 py-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs transition-all flex items-center justify-center gap-2 border border-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 dark:border-gray-700"
           >
             Back to Home <ChevronRight className="w-3.5 h-3.5" />
           </Link>

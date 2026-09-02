@@ -6,6 +6,7 @@ export interface Movie {
   title: string;
   synopsis: string;
   posterUrl: string;
+  bannerUrl?: string | null;
   trailerUrl?: string;
   genre: string[];
   language: string;
