@@ -7,15 +7,21 @@ import { takeGoogleReturnPath } from '../lib/googleAuth';
 
 /**
  * Landing page reached after the server-side Google OAuth success redirect.
- * The server already set the httpOnly refresh cookie; here we fetch a fresh
- * access token and the user profile, then restore the session and continue.
+ *
+ * The server passes a short-lived one-time ?token= in the URL instead of
+ * relying on cross-origin httpOnly cookies (which modern browsers block during
+ * cross-domain redirects from Render → Vercel).
+ *
+ * We POST that token to /auth/google/session which:
+ *   1. Validates + deletes the one-time DB row (single-use)
+ *   2. Sets the httpOnly refresh cookie (same-origin now, so it works)
+ *   3. Returns the access token + user profile in JSON
  */
 export const GoogleCallbackPage: React.FC = () => {
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   useEffect(() => {
     const urlError = searchParams.get('error');
@@ -24,21 +30,21 @@ export const GoogleCallbackPage: React.FC = () => {
       return;
     }
 
+    const token = searchParams.get('token');
+    if (!token) {
+      setError('No session token received. Please try signing in again.');
+      return;
+    }
+
     (async () => {
       try {
-        // Exchange the refresh cookie (set by the server callback) for an
-        // access token, then fetch the user profile.
-        const refreshRes = await apiClient.post('/auth/refresh');
-        const accessToken = refreshRes.data?.data?.accessToken;
-        if (!accessToken) throw new Error('Could not establish a session');
+        // Exchange the one-time token for real JWT tokens.
+        // The API sets the httpOnly refresh cookie in this response and
+        // returns the access token + user in the body.
+        const res = await apiClient.get(`/auth/google/session?token=${encodeURIComponent(token)}`);
 
-        // Set the token first so the subsequent /users/me request carries the
-        // Authorization header (avoiding a needless 401 → auto-refresh round trip).
-        setAccessToken(accessToken);
-
-        const meRes = await apiClient.get('/users/me');
-        const user = meRes.data?.data;
-        if (!user) throw new Error('Could not load your profile');
+        const { user, accessToken } = res.data?.data ?? {};
+        if (!accessToken || !user) throw new Error('Could not establish a session');
 
         setAuth(user, accessToken);
         navigate(takeGoogleReturnPath() || '/', { replace: true });
@@ -50,7 +56,7 @@ export const GoogleCallbackPage: React.FC = () => {
         );
       }
     })();
-  }, [searchParams, navigate, setAuth, setAccessToken]);
+  }, [searchParams, navigate, setAuth]);
 
   return (
     <div className="min-h-[78vh] flex items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-950">
