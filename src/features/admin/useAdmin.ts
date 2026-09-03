@@ -14,7 +14,7 @@ export interface AdminMovie {
   format: string[];
   runtimeMins: number;
   rating: string;
-  cast: { name: string; role: string; photoUrl: string }[];
+  cast: { name: string; role?: string | null; photoUrl?: string | null }[];
   releaseDate: string;
   isShowing: boolean;
   createdAt: string;

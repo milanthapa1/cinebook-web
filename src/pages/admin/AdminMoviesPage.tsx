@@ -88,21 +88,21 @@ const MovieCard: React.FC<{
 
 // ─── Cast Row editor ──────────────────────────────────────────────────────────
 const CastEditor: React.FC<{
-  cast: { name: string; role: string; photoUrl: string }[];
+  cast: { name: string; role?: string | null; photoUrl?: string | null }[];
   onChange: (cast: { name: string; role: string; photoUrl: string }[]) => void;
 }> = ({ cast, onChange }) => {
-  const add = () => onChange([...cast, { name: '', role: '', photoUrl: '' }]);
-  const remove = (i: number) => onChange(cast.filter((_, idx) => idx !== i));
+  const add = () => onChange([...cast as any, { name: '', role: '', photoUrl: '' }]);
+  const remove = (i: number) => onChange((cast as any).filter((_: any, idx: number) => idx !== i));
   const update = (i: number, k: string, v: string) =>
-    onChange(cast.map((c, idx) => idx === i ? { ...c, [k]: v } : c));
+    onChange((cast as any).map((c: any, idx: number) => idx === i ? { ...c, [k]: v } : c));
 
   return (
     <div className="space-y-2">
       {cast.map((c, i) => (
         <div key={i} className="flex gap-2 items-start">
           <div className="flex-1 grid grid-cols-2 gap-2">
-            <input value={c.name} onChange={e => update(i, 'name', e.target.value)} placeholder="Actor name" className={inputCls} />
-            <input value={c.role} onChange={e => update(i, 'role', e.target.value)} placeholder="Character role" className={inputCls} />
+            <input value={c.name ?? ''} onChange={e => update(i, 'name', e.target.value)} placeholder="Actor name" className={inputCls} />
+            <input value={c.role ?? ''} onChange={e => update(i, 'role', e.target.value)} placeholder="Character role" className={inputCls} />
           </div>
           <button onClick={() => remove(i)} className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors shrink-0 mt-0.5">
             <UserMinus className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export const AdminMoviesPage: React.FC = () => {
       bannerUrl: m.bannerUrl ?? '',
       trailerUrl: m.trailerUrl ?? '', genre: m.genre, language: m.language,
       format: m.format, runtimeMins: m.runtimeMins, rating: m.rating,
-      cast: m.cast ?? [], director: (m as any).director ?? '',
+      cast: (m.cast ?? []).map(c => ({ name: c.name ?? '', role: c.role ?? '', photoUrl: c.photoUrl ?? '' })), director: (m as any).director ?? '',
       releaseDate: (m.releaseDate || '').split('T')[0], isShowing: m.isShowing,
     });
     setEditId(m.id); setError(''); setShowForm(true);
@@ -221,19 +221,35 @@ export const AdminMoviesPage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!form.title.trim()) { setError('Title is required.'); return; }
-    if (!form.synopsis.trim()) { setError('Synopsis is required.'); return; }
     if (!form.posterUrl.trim()) { setError('Poster is required.'); return; }
+    if (!form.genre.length) { setError('At least one genre is required.'); return; }
+    if (!form.format.length) { setError('At least one format is required.'); return; }
+    if (!form.language.trim()) { setError('Language is required.'); return; }
     setError('');
     const payload = {
       ...form,
       trailerUrl: (form.trailerUrl ?? '').trim() || undefined,
       bannerUrl: (form.bannerUrl ?? '').trim() || undefined,
+      // Clean up cast: convert empty strings to null/undefined so Zod url() validation passes
+      cast: form.cast.map(c => ({
+        name: c.name,
+        role: (c.role ?? '').trim() || undefined,
+        photoUrl: (c.photoUrl ?? '').trim() || undefined,
+      })),
     };
     try {
       if (editId) await updateMut.mutateAsync({ id: editId, ...payload });
       else await createMut.mutateAsync(payload as any);
       setShowForm(false);
-    } catch (e: any) { setError(e.response?.data?.message || 'Save failed'); }
+    } catch (e: any) {
+      const data = e.response?.data;
+      if (data?.errors?.length) {
+        // Show specific field validation errors from Zod
+        setError(data.errors.map((err: any) => `${err.field.replace('body.', '')}: ${err.message}`).join(' | '));
+      } else {
+        setError(data?.message || 'Save failed');
+      }
+    }
   };
 
   const handleDelete = async (id: string) => {
