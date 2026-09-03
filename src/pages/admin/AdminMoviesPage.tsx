@@ -228,14 +228,21 @@ export const AdminMoviesPage: React.FC = () => {
     setError('');
     const payload = {
       ...form,
+      // Ensure runtimeMins is always a valid positive number
+      runtimeMins: Number(form.runtimeMins) > 0 ? Number(form.runtimeMins) : 1,
+      // Convert empty optional strings to undefined so Zod .optional().nullable() accepts them
       trailerUrl: (form.trailerUrl ?? '').trim() || undefined,
-      bannerUrl: (form.bannerUrl ?? '').trim() || undefined,
-      // Clean up cast: convert empty strings to null/undefined so Zod url() validation passes
-      cast: form.cast.map(c => ({
-        name: c.name,
-        role: (c.role ?? '').trim() || undefined,
-        photoUrl: (c.photoUrl ?? '').trim() || undefined,
-      })),
+      bannerUrl:  (form.bannerUrl  ?? '').trim() || undefined,
+      director:   (form.director   ?? '').trim() || undefined,
+      synopsis:   (form.synopsis   ?? '').trim() || '',
+      // Clean up cast: empty role/photoUrl strings → undefined (not valid URL)
+      cast: form.cast
+        .filter(c => c.name.trim()) // drop cast rows with no name
+        .map(c => ({
+          name:     c.name.trim(),
+          role:     (c.role     ?? '').trim() || undefined,
+          photoUrl: (c.photoUrl ?? '').trim() || undefined,
+        })),
     };
     try {
       if (editId) await updateMut.mutateAsync({ id: editId, ...payload });
@@ -464,7 +471,7 @@ export const AdminMoviesPage: React.FC = () => {
                 </Field>
 
                 <Field label="Runtime (min)">
-                  <input type="number" className={inputCls} value={form.runtimeMins} onChange={e => set('runtimeMins', Number(e.target.value))} />
+                  <input type="number" min="1" max="600" className={inputCls} value={form.runtimeMins || ''} onChange={e => set('runtimeMins', e.target.value === '' ? '' : Number(e.target.value))} />
                 </Field>
 
                 <Field label="Release Date">

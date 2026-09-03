@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Mail, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../features/auth/useAuthStore';
 import { apiClient } from '../lib/apiClient';
 import { signInWithGoogle } from '../lib/googleAuth';
@@ -55,11 +55,6 @@ export const LoginPage: React.FC = () => {
     // Redirect to the backend, which performs the full server-side Google
     // OAuth exchange and redirects back to /google/callback.
     signInWithGoogle(from);
-  };
-
-  const handleDemoLogin = () => {
-    setEmail('demo@cinebook.com');
-    setPassword('password123');
   };
 
   return (
@@ -155,17 +150,6 @@ export const LoginPage: React.FC = () => {
             {loading ? 'Signing in...' : 'Sign In'} <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Demo Credentials Quick Fill */}
-        <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={handleDemoLogin}
-            type="button"
-            className="w-full py-2.5 px-3 bg-gray-50 hover:bg-gray-100 text-[#00a8cc] border border-gray-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700"
-          >
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#00a8cc]" /> Fill Demo Account (demo@cinebook.com)
-          </button>
-        </div>
 
         {/* Sign Up Link */}
         <p className="text-center text-xs text-gray-600 dark:text-gray-400">

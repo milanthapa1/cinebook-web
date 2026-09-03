@@ -13,7 +13,8 @@ export interface Movie {
   format: string[];
   runtimeMins: number;
   rating: string;
-  cast: Array<{ name: string; role: string; photoUrl: string }>;
+  cast: Array<{ name: string; role?: string | null; photoUrl?: string | null }>;
+  director?: string | null;
   releaseDate: string;
   isShowing: boolean;
 }
