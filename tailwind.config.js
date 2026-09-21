@@ -25,7 +25,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Poppins', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        logo: ['Bebas Neue', 'Anton', 'Arial Narrow', 'sans-serif'],
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s infinite',

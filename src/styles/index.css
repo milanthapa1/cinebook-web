@@ -1,12 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
-  /* Netflix-style logo wordmark */
+  /* Logo wordmark only — everything else is Poppins */
   .font-logo {
     font-family: 'Bebas Neue', 'Anton', 'Arial Narrow', sans-serif;
     letter-spacing: 0.04em;
@@ -16,11 +13,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
-  body {
-    @apply bg-gray-50 text-gray-900 selection:bg-[#00a8cc] selection:text-white;
-    font-family: 'Poppins', sans-serif;
+  body,
+  #root {
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    @apply bg-gray-50 text-gray-900 antialiased selection:bg-[#00a8cc] selection:text-white;
   }
   .dark body {
     @apply bg-gray-950 text-gray-100 selection:bg-[#00a8cc] selection:text-white;
